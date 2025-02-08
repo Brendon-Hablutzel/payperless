@@ -10,39 +10,46 @@ import ViewReceipt from './components/ViewReceipt.tsx'
 import App from './components/App.tsx'
 import ShareReceipt from './components/ShareReceipt.tsx'
 import SharedReceipt from './components/SharedReceipt.tsx'
+import Layout from './components/Layout.tsx'
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-  },
   {
     path: '/login',
     element: <Login />,
   },
   {
-    path: '/debug',
-    element: <Debug />,
-  },
-  {
-    path: '/user-home',
-    element: <MyReceipts />,
-  },
-  {
-    path: '/receipts/:id/image',
-    element: <ViewReceipt />,
-  },
-  {
-    path: '/scan',
-    element: <Scan />,
-  },
-  {
-    path: '/share-receipt/:id',
-    element: <ShareReceipt />,
-  },
-  {
     path: '/receipt/:id',
     element: <SharedReceipt />,
+  },
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: '',
+        element: <App />,
+      },
+      {
+        path: 'debug',
+        element: <Debug />,
+      },
+      {
+        path: 'user-home',
+        element: <MyReceipts />,
+      },
+      {
+        path: 'receipts/:id/image',
+        element: <ViewReceipt />,
+      },
+      {
+        path: 'scan',
+        element: <Scan />,
+      },
+      {
+        path: 'share-receipt/:id',
+        element: <ShareReceipt />,
+      },
+    ],
   },
 ])
 
