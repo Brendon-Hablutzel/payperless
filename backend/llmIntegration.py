@@ -189,12 +189,19 @@ def process_receipt(pil_img, num_retries=3):
     return final_json
 
 
-def generate_insights(reciept_json):
+def generate_insights(reciept_json: list):
     prompt = """
     Generate insights from reciept data. Tell me what you can infer from this reciept.
     Patterns you observe, any interesting insights, etc.
     Good Choices, Bad Choices, etc.
     """
+
+    all_receipts = ""
+    for i in range(len(reciept_json)):
+        all_receipts += f"\n\nReciept {i+1}:" + json.dumps(reciept_json[i])
+
+
+
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY"),
         # model=model,
@@ -206,7 +213,7 @@ def generate_insights(reciept_json):
                 "content": [
                     {
                         "type": "text",
-                        "text": prompt + json.dumps(reciept_json),
+                        "text": prompt + all_receipts,
                     }
                 ],
             }
@@ -223,4 +230,4 @@ if __name__ == "__main__":
     with Image.open(test_image_path) as img:
         receipt_json = process_receipt(img)
         print(receipt_json)
-        print(generate_insights(receipt_json))
+        print(generate_insights([receipt_json]))
