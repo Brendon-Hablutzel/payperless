@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import MealPlanner from './MealPlanner';
+
 const MyReceipts = () => {
+  const [showMealPlanner, setShowMealPlanner] = useState(false);
+  
   // Mock receipt data
   const mockReceipts = [
     {
@@ -26,6 +31,19 @@ const MyReceipts = () => {
 
   return (
     <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">My Receipts</h1>
+        <button
+          onClick={() => setShowMealPlanner(true)}
+          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+          </svg>
+          Suggest Meal Plans
+        </button>
+      </div>
       <div className="space-y-4">
         {mockReceipts.map((receipt) => (
           <div 
@@ -53,6 +71,10 @@ const MyReceipts = () => {
           </div>
         ))}
       </div>
+      
+      {showMealPlanner && (
+        <MealPlanner onClose={() => setShowMealPlanner(false)} />
+      )}
     </div>
   );
 };
