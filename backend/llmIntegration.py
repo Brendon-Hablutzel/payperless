@@ -94,7 +94,6 @@ def encode_image(pil_img, format="JPEG"):
 def ocr_reciept(pil_img, model=model):
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY"),
-        # api_key="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",
         # model=model,
     )
     base64_image = encode_image(pil_img)
@@ -204,7 +203,8 @@ def ocr_reciept(pil_img, model=model):
 
 
 def ocr_receipt_gemini(pil_img, model="gemini-2.0-flash"):
-    client = genai.Client(api_key="AIzaSyB3kKt4zgjMry1bClJ-C7S-zMohgyiLSgI")
+    apikey = os.environ.get("GEMINI_API_KEY")
+    client = genai.Client(api_key=apikey)
     prompt = """
     Read the attached image and return the information in JSON format.
     Return only a single JSON object.
@@ -380,7 +380,6 @@ def generate_insights(reciept_json):
     """
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY"),
-        # api_key="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",
         # model=model,
     )
     chat_completion = client.chat.completions.create(
