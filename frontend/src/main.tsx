@@ -7,6 +7,7 @@ import Debug from './components/Debug.tsx'
 import UserHome from './components/UserHome.tsx'
 import Login from './components/Login.tsx'
 import ViewReceipt from './components/ViewReceipt.tsx'
+import Dashboard from './components/Dashboard.tsx'
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: '/scan',
     element: <Scan />,
+  },
+  {
+    path: '/dashboard',
+    element: <Dashboard />,
   },
 ])
 
