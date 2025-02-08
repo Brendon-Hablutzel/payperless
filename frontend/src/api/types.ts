@@ -45,6 +45,6 @@ export const receiptImageReceiptsIdImageGetParams = zod.object({
   "id": zod.string()
 })
 
-export const receiptImageReceiptsIdImageGetResponse = zod.string()
+export const receiptImageReceiptsIdImageGetResponse = zod.any()
 
 
