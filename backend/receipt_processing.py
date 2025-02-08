@@ -1,70 +1,13 @@
-# Open images by using Image.open() from PIL library.
-# use process_receipt(img) to get image reciepts. Accepts PIL image as input and returns a JSON object with reciept details.
-
-
+import hashlib
 import os
 from groq import Groq
 import base64
 from dotenv import load_dotenv
-import re
-import pprint
 import json
 from io import BytesIO
 from PIL import Image
 
 load_dotenv()
-# from google.genai.model import ChatModel
-# from google.genai.session import Session
-
-# from google import genai
-# from google.genai import types
-import hashlib
-
-model = "llama-3.2-90b-vision-preview"
-
-# image = PIL.Image.open('60c4199364474569561cba359d486e6c69ae8cba.jpeg')
-
-
-# response = client.models.generate_content(
-#     model="gemini-2.0-flash",
-#     contents=["What is this image?", image])
-
-# print(response.text)
-
-# exit()
-# Initialize the session with your API key
-# session = Session(api_key="YOUR_API_KEY")
-
-# # Load the Gemini 2.0 Flash model
-# model = ChatModel.from_pretrained("models/gemini-2.0-flash", session=session)
-
-# # Function to get a response from the model
-# def get_response(prompt):
-#     response = model.chat(prompt)
-#     return response.responses[0].text
-
-# # Main loop for the chatbot
-# if __name__ == "__main__":
-#     print("Welcome to the Gemini 2.0 Flash Chatbot!")
-#     while True:
-#         user_input = input("You: ")
-#         if user_input.lower() in ["exit", "quit"]:
-#             print("Goodbye!")
-#             break
-#         bot_response = get_response(user_input)
-#         print(f"Bot: {bot_response}")
-
-
-# Path to your image
-
-# Getting the base64 string
-# base64_image = encode_image(image_path)
-
-
-# Function to encode the image
-# def encode_image(image_path):
-#     with open(image_path, "rb") as image_file:
-#         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
 def encode_image(pil_img, format="JPEG"):
@@ -75,20 +18,7 @@ def encode_image(pil_img, format="JPEG"):
     return encoded
 
 
-# def encode_image_name(image_path, format="JPEG"):
-#     # """
-#     # Wrapper function that accepts an image path,
-#     # opens the image using PIL, and returns the base64-encoded string.
-
-#     # Parameters:
-#     #     image_path (str): The file path to the image.
-#     #     format (str): The format to use when saving (default is 'JPEG').
-
-#     # Returns:
-#     #     str: The base64-encoded string of the image.
-#     # """
-#     with Image.open(image_path) as img:
-#         return encode_pil_image(img, format=format)
+model = "llama-3.2-90b-vision-preview"
 
 
 def ocr_reciept(pil_img, model=model):
@@ -202,74 +132,6 @@ def ocr_reciept(pil_img, model=model):
     return chat_completion.choices[0].message.content
 
 
-def ocr_receipt_gemini(pil_img, model="gemini-2.0-flash"):
-    apikey = os.environ.get("GEMINI_API_KEY")
-    client = genai.Client(api_key=apikey)
-    prompt = """
-    Read the attached image and return the information in JSON format.
-    Return only a single JSON object.
-    If you can't find the information, return an empty object or leave fields empty.
-    Do not add any additional text to the output.
-    Only print JSON. Do not include any extra receipt details.
-
-    Example:
-
-    Output format:
-    {
-        "date": "DDMMYYYY",
-        "total_amount": 0.0,
-        "items": [
-            {
-                "name": "Item Name",
-                "quantity": 0,
-                "price": 0.0,
-                "category": "Item Category",
-                "sub_category": "Item Sub Category",
-                "is_heathly": true,
-                "is_organic": true,
-                "is_local": true,
-                "is_sustainable": true
-            }
-        ],
-        "tax": 0.0,
-        "tip": 0.0,
-        "store_name": "Store Name",
-        "address": "Address",
-        "phone_number": "Phone Number",
-        "store_type": "Store Type"
-    }
-
-    Example Output:
-    ```json
-    {
-        "date": "07042017",
-        "total_amount": 29.01,
-        "items": [
-            {
-                "name": "Unknown Item",
-                "quantity": 1,
-                "price": 25.23
-            }
-        ],
-        "tax": 3.78,
-        "store_name": "Main Street Restaurant",
-        "address": "6332 Business Drive Suite 528 Palo Alto California 94301",
-        "phone_number": "575-1628095",
-        "store_type": "Restaurant"
-    }```
-    """
-
-    # Call Gemini using the multimodal generate_content endpoint.
-    # Pass the text prompt as the first item and the PIL image as the second.
-    response = client.models.generate_content(
-        model=model,
-        contents=[prompt, pil_img],
-        # temperature=0.1
-    )
-    print(response.text)
-    return response.text
-
-
 def llm_resp_to_json(llm_resp):
     json_output = ""
 
@@ -293,25 +155,6 @@ def llm_resp_to_json(llm_resp):
 
     output_json = json.loads(json_output)
     return output_json
-
-
-# chat_completion = client.chat.completions.create(
-#     messages=[
-#         {
-#             "role": "user",
-#             "content": [
-#                 {"type": "text", "text": "What's in this image?"},
-#                 {
-#                     "type": "image_url",
-#                     "image_url": {
-#                         "url": f"data:image/jpeg;base64,{base64_image}",
-#                     },
-#                 },
-#             ],
-#         }
-#     ],
-#     model=model,
-# )
 
 
 def calculate_sha256(pil_img, format="PNG"):
@@ -400,22 +243,7 @@ def generate_insights(reciept_json):
     return chat_completion.choices[0].message.content
 
 
-# print(chat_completion.choices[0].message.content)
-if __name__ == "__main__":
-    test_image_path = "60c4199364474569561cba359d486e6c69ae8cba.jpeg"
-    test_image_path = "sa4bzhkgewj81.jpg"
-    # print()
-    # pprint.pprint(llm_resp_to_json(ocr_reciept()))
-    with Image.open(test_image_path) as img:
-        # calculate Image Hash
-        # image_hash = hash(img.tobytes())
-
-        # pprint.pprint(ocr_receipt(img))
+def get_receipt_json(image_path):
+    with Image.open(image_path) as img:
         receipt_json = process_receipt(img)
-        # pprint.pprint(receipt_json)
-        print(generate_insights(receipt_json))
-        # pprint.pprint(process_receipt(img))
-        # with open(f"llm_responses/receipt_{image_hash}.json", "w+") as f:
-        #     json.dump(receipt_json, f)
-
-    # pprint.pprint(process_receipt())
+        return receipt_json
