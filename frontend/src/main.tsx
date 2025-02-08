@@ -1,25 +1,42 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import './index.css'
+import Scan from './components/Scan.tsx'
+import Debug from './components/Debug.tsx'
+import UserHome from './components/UserHome.tsx'
 import Login from './components/Login.tsx'
+import ViewReceipt from './components/ViewReceipt.tsx'
 import Dashboard from './components/Dashboard.tsx'
+
 const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
   },
   {
-    path: '/',
-    // TODO: errorElement
-    element: <App />,
+    path: '/debug',
+    element: <Debug />,
+  },
+  {
+    path: '/user-home',
+    element: <UserHome />,
+  },
+  {
+    path: '/receipts/:id/image',
+    element: <ViewReceipt />,
+  },
+  {
+    path: '/scan',
+    element: <Scan />,
   },
   {
     path: '/dashboard',
     element: <Dashboard />,
   },
 ])
+
+// TODO: errorElement
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
