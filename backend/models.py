@@ -7,7 +7,7 @@ class Receipt(BaseModel):
     name: str
     key: str
     data: dict
-    timestamp: datetime
+    timestamp: str
 
 
 class NewReceipt(BaseModel):
