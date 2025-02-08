@@ -1,9 +1,5 @@
-# use process_receipt(img) to get image reciepts. Accepts PIL image as input and returns a JSON object with reciept details.
 # Open images by using Image.open() from PIL library.
-
-
-
-
+# use process_receipt(img) to get image reciepts. Accepts PIL image as input and returns a JSON object with reciept details.
 
 
 import os
@@ -20,10 +16,11 @@ load_dotenv()
 # from google.genai.model import ChatModel
 # from google.genai.session import Session
 
-from google import genai
-from google.genai import types
+# from google import genai
+# from google.genai import types
 import hashlib
 
+model = "llama-3.2-90b-vision-preview"
 
 # image = PIL.Image.open('60c4199364474569561cba359d486e6c69ae8cba.jpeg')
 
@@ -58,16 +55,10 @@ import hashlib
 #         print(f"Bot: {bot_response}")
 
 
-model = "llama-3.2-90b-vision-preview"
-test_image_path = "60c4199364474569561cba359d486e6c69ae8cba.jpeg"
-test_image_path = "sa4bzhkgewj81.jpg"
-
 # Path to your image
 
 # Getting the base64 string
 # base64_image = encode_image(image_path)
-
-
 
 
 # Function to encode the image
@@ -102,9 +93,9 @@ def encode_image(pil_img, format="JPEG"):
 
 def ocr_reciept(pil_img, model=model):
     client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-    # api_key="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",
-    # model=model,
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # api_key="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",
+        # model=model,
     )
     base64_image = encode_image(pil_img)
     # ocr_completion = client.ocr.completions.create(
@@ -207,7 +198,6 @@ def ocr_reciept(pil_img, model=model):
         ],
         model=model,
         temperature=0.1,
-        
     )
     # print(chat_completion.choices[0].message.content)
     return chat_completion.choices[0].message.content
@@ -216,58 +206,58 @@ def ocr_reciept(pil_img, model=model):
 def ocr_receipt_gemini(pil_img, model="gemini-2.0-flash"):
     client = genai.Client(api_key="AIzaSyB3kKt4zgjMry1bClJ-C7S-zMohgyiLSgI")
     prompt = """
-Read the attached image and return the information in JSON format.
-Return only a single JSON object.
-If you can't find the information, return an empty object or leave fields empty.
-Do not add any additional text to the output.
-Only print JSON. Do not include any extra receipt details.
+    Read the attached image and return the information in JSON format.
+    Return only a single JSON object.
+    If you can't find the information, return an empty object or leave fields empty.
+    Do not add any additional text to the output.
+    Only print JSON. Do not include any extra receipt details.
 
-Example:
+    Example:
 
-Output format:
-{
-    "date": "DDMMYYYY",
-    "total_amount": 0.0,
-    "items": [
-        {
-            "name": "Item Name",
-            "quantity": 0,
-            "price": 0.0,
-            "category": "Item Category",
-            "sub_category": "Item Sub Category",
-            "is_heathly": true,
-            "is_organic": true,
-            "is_local": true,
-            "is_sustainable": true
-        }
-    ],
-    "tax": 0.0,
-    "tip": 0.0,
-    "store_name": "Store Name",
-    "address": "Address",
-    "phone_number": "Phone Number",
-    "store_type": "Store Type"
-}
+    Output format:
+    {
+        "date": "DDMMYYYY",
+        "total_amount": 0.0,
+        "items": [
+            {
+                "name": "Item Name",
+                "quantity": 0,
+                "price": 0.0,
+                "category": "Item Category",
+                "sub_category": "Item Sub Category",
+                "is_heathly": true,
+                "is_organic": true,
+                "is_local": true,
+                "is_sustainable": true
+            }
+        ],
+        "tax": 0.0,
+        "tip": 0.0,
+        "store_name": "Store Name",
+        "address": "Address",
+        "phone_number": "Phone Number",
+        "store_type": "Store Type"
+    }
 
-Example Output:
-```json
-{
-    "date": "07042017",
-    "total_amount": 29.01,
-    "items": [
-        {
-            "name": "Unknown Item",
-            "quantity": 1,
-            "price": 25.23
-        }
-    ],
-    "tax": 3.78,
-    "store_name": "Main Street Restaurant",
-    "address": "6332 Business Drive Suite 528 Palo Alto California 94301",
-    "phone_number": "575-1628095",
-    "store_type": "Restaurant"
-}```
-"""
+    Example Output:
+    ```json
+    {
+        "date": "07042017",
+        "total_amount": 29.01,
+        "items": [
+            {
+                "name": "Unknown Item",
+                "quantity": 1,
+                "price": 25.23
+            }
+        ],
+        "tax": 3.78,
+        "store_name": "Main Street Restaurant",
+        "address": "6332 Business Drive Suite 528 Palo Alto California 94301",
+        "phone_number": "575-1628095",
+        "store_type": "Restaurant"
+    }```
+    """
 
     # Call Gemini using the multimodal generate_content endpoint.
     # Pass the text prompt as the first item and the PIL image as the second.
@@ -297,7 +287,7 @@ def llm_resp_to_json(llm_resp):
             curly_brace_count -= 1
         if curly_brace_count > 0:
             output_json += char
-    
+
     output_json = output_json + "}"
     json_output = output_json
 
@@ -323,15 +313,16 @@ def llm_resp_to_json(llm_resp):
 #     model=model,
 # )
 
+
 def calculate_sha256(pil_img, format="PNG"):
     """
     Calculate the SHA256 hash of a PIL image.
-    
+
     Parameters:
         pil_img (PIL.Image.Image): The image to hash.
-        format (str): The format to use when saving the image to bytes. 
+        format (str): The format to use when saving the image to bytes.
                       Using a lossless format like 'PNG' is recommended.
-    
+
     Returns:
         str: The hexadecimal SHA256 hash of the image.
     """
@@ -349,7 +340,7 @@ def calculate_sha256(pil_img, format="PNG"):
 def process_receipt(pil_img):
     image_hash = calculate_sha256(pil_img)
     # if exist llm_responses/receipt_{image_hash}.json return that
-    # create_dir = 
+    # create_dir =
     if not os.path.exists("llm_responses"):
         os.mkdir("llm_responses")
     if not os.path.exists("llm_responses/texts"):
@@ -381,17 +372,49 @@ def process_receipt(pil_img):
     # return llm_resp_to_json()
 
 
+def generate_insights(reciept_json):
+    prompt = """
+    Generate insights from reciept data. Tell me what you can infer from this reciept.
+    Patterns you observe, any interesting insights, etc.
+    Good Choices, Bad Choices, etc.
+    """
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # api_key="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",
+        # model=model,
+    )
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt + json.dumps(reciept_json),
+                    }
+                ],
+            }
+        ],
+        model=model,
+        temperature=0.1,
+    )
+    return chat_completion.choices[0].message.content
+
+
 # print(chat_completion.choices[0].message.content)
 if __name__ == "__main__":
+    test_image_path = "60c4199364474569561cba359d486e6c69ae8cba.jpeg"
+    test_image_path = "sa4bzhkgewj81.jpg"
     # print()
     # pprint.pprint(llm_resp_to_json(ocr_reciept()))
     with Image.open(test_image_path) as img:
-        #calculate Image Hash
+        # calculate Image Hash
         # image_hash = hash(img.tobytes())
 
         # pprint.pprint(ocr_receipt(img))
         receipt_json = process_receipt(img)
-        pprint.pprint(receipt_json)
+        # pprint.pprint(receipt_json)
+        print(generate_insights(receipt_json))
         # pprint.pprint(process_receipt(img))
         # with open(f"llm_responses/receipt_{image_hash}.json", "w+") as f:
         #     json.dump(receipt_json, f)
