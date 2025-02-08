@@ -5,13 +5,11 @@ const Navigation = () => {
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-xl font-bold text-gray-800">
-                PayPerLess
-              </Link>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <div className="flex items-center">
+            <Link to="/" className="text-xl font-bold text-gray-800">
+              PayPerLess
+            </Link>
+            <div className="ml-6 flex space-x-8">
               <Link
                 to="/user-home"
                 className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
@@ -22,7 +20,7 @@ const Navigation = () => {
                 to="/scan"
                 className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
               >
-                Scan Receipt
+                Scan
               </Link>
             </div>
           </div>
