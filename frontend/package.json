@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prod": "vite --port 9384 --host",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check": "npx prettier . --check",
