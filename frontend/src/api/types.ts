@@ -10,25 +10,41 @@ import {
 
 
 /**
- * @summary Read Root
+ * @summary List Receipts
  */
-export const readRootGetResponse = zod.any()
+export const listReceiptsReceiptsGetResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "key": zod.string(),
+  "data": zod.object({
+
+}),
+  "timestamp": zod.string().datetime()
+})
+export const listReceiptsReceiptsGetResponse = zod.array(listReceiptsReceiptsGetResponseItem)
 
 
 /**
- * @summary Read Item
+ * @summary Create Receipt
  */
-export const readItemItemsItemIdGetParams = zod.object({
-  "item_id": zod.number()
+export const createReceiptReceiptsPostResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "key": zod.string(),
+  "data": zod.object({
+
+}),
+  "timestamp": zod.string().datetime()
 })
 
-export const readItemItemsItemIdGetQueryParams = zod.object({
-  "q": zod.string().or(zod.null()).optional()
+
+/**
+ * @summary Receipt Image
+ */
+export const receiptImageReceiptsIdImageGetParams = zod.object({
+  "id": zod.string()
 })
 
-export const readItemItemsItemIdGetResponse = zod.object({
-  "item_id": zod.number(),
-  "q": zod.string().or(zod.null())
-})
+export const receiptImageReceiptsIdImageGetResponse = zod.string()
 
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { createNewReceipt } from '../api/fetch'
 
-function App() {
+const Scan = () => {
   const [image, setImage] = useState<File | null>(null)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -10,8 +11,16 @@ function App() {
     }
   }
 
+  const [name, setName] = useState('')
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
+    if (image && name) {
+      await createNewReceipt(name, image)
+    } else {
+      console.error('image upload failed')
+    }
 
     // if (image) {
     //   const formData = new FormData()
@@ -36,6 +45,11 @@ function App() {
       <h1 className="text-6xl text-center">Scan your Receipt</h1>
       <form onSubmit={handleSubmit}>
         <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
           type="file"
           accept="image/*"
           capture="environment" // use rear camera
@@ -53,4 +67,4 @@ function App() {
   )
 }
 
-export default App
+export default Scan
