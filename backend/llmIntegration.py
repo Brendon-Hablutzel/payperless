@@ -1,3 +1,11 @@
+# use process_receipt(img) to get image reciepts. Accepts PIL image as input and returns a JSON object with reciept details.
+# Open images by using Image.open() from PIL library.
+
+
+
+
+
+
 import os
 from groq import Groq
 import base64
@@ -379,7 +387,7 @@ if __name__ == "__main__":
     # pprint.pprint(llm_resp_to_json(ocr_reciept()))
     with Image.open(test_image_path) as img:
         #calculate Image Hash
-        image_hash = hash(img.tobytes())
+        # image_hash = hash(img.tobytes())
 
         # pprint.pprint(ocr_receipt(img))
         receipt_json = process_receipt(img)
