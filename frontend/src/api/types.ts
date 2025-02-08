@@ -19,7 +19,7 @@ export const listReceiptsReceiptsGetResponseItem = zod.object({
   "data": zod.object({
 
 }),
-  "timestamp": zod.string().datetime()
+  "timestamp": zod.string()
 })
 export const listReceiptsReceiptsGetResponse = zod.array(listReceiptsReceiptsGetResponseItem)
 
@@ -34,7 +34,25 @@ export const createReceiptReceiptsPostResponse = zod.object({
   "data": zod.object({
 
 }),
-  "timestamp": zod.string().datetime()
+  "timestamp": zod.string()
+})
+
+
+/**
+ * @summary Get Receipt
+ */
+export const getReceiptReceiptsIdGetParams = zod.object({
+  "id": zod.string()
+})
+
+export const getReceiptReceiptsIdGetResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "key": zod.string(),
+  "data": zod.object({
+
+}),
+  "timestamp": zod.string()
 })
 
 
@@ -46,5 +64,17 @@ export const receiptImageReceiptsIdImageGetParams = zod.object({
 })
 
 export const receiptImageReceiptsIdImageGetResponse = zod.any()
+
+
+/**
+ * @summary General Insights
+ */
+export const generalInsightsInsightsGeneralGetResponse = zod.string()
+
+
+/**
+ * @summary Sustainability Insights
+ */
+export const sustainabilityInsightsInsightsSustainabilityGetResponse = zod.string()
 
 
