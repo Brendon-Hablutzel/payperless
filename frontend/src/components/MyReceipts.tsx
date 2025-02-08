@@ -26,7 +26,6 @@ const MyReceipts = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">My Receipts</h1>
       <div className="space-y-4">
         {mockReceipts.map((receipt) => (
           <div 
