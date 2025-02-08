@@ -16,11 +16,14 @@ from imagestore import (
 )
 from uuid import uuid4
 from datetime import datetime
+from dotenv import load_dotenv
+from receipt_processing import get_receipt_json
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("creating tables")
+    load_dotenv()
     create_receipt_table()
     yield
     print("shutting down")
@@ -47,10 +50,10 @@ async def create_receipt(
 
     await store_receipt_image(key, image)
     try:
+        j = get_receipt_json(get_image_location(key))
+
         return insert_receipt_record(
-            NewReceipt(
-                name=name, key=key, data={"hello": "world"}, timestamp=datetime.now()
-            )
+            NewReceipt(name=name, key=key, data=j, timestamp=datetime.now())
         )
     except Exception as e:
         delete_receipt_image(key)
@@ -63,7 +66,27 @@ def list_receipts() -> list[Receipt]:
     return receipts
 
 
+@app.get("/receipts/{id}")
+def get_receipt(id: str) -> Receipt:
+    receipt = get_receipt_record(id)
+    return receipt
+
+
 @app.get("/receipts/{id}/image")
 def receipt_image(id: str) -> FileResponse:
     receipt = get_receipt_record(id)
     return FileResponse(get_image_location(receipt.key))
+
+
+@app.get("/insights/general")
+def general_insights() -> str:
+    receipts = list_receipt_records()
+    insights = ""
+    return insights
+
+
+@app.get("/insights/sustainability")
+def sustainability_insights() -> str:
+    receipts = list_receipt_records()
+    insights = ""
+    return insights
