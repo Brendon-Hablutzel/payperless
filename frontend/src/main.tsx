@@ -9,6 +9,7 @@ import Login from './components/Login.tsx'
 import ViewReceipt from './components/ViewReceipt.tsx'
 import App from './components/App.tsx'
 import ShareReceipt from './components/ShareReceipt.tsx'
+import SharedReceipt from './components/SharedReceipt.tsx'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: '/share-receipt/:id',
     element: <ShareReceipt />,
+  },
+  {
+    path: '/receipt/:id',
+    element: <SharedReceipt />,
   },
 ])
 
