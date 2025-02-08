@@ -4,10 +4,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import Scan from './components/Scan.tsx'
 import Debug from './components/Debug.tsx'
-import UserHome from './components/UserHome.tsx'
+import MyReceipts from './components/MyReceipts.tsx'
 import Login from './components/Login.tsx'
 import ViewReceipt from './components/ViewReceipt.tsx'
 import App from './components/App.tsx'
+import ShareReceipt from './components/ShareReceipt.tsx'
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/user-home',
-    element: <UserHome />,
+    element: <MyReceipts />,
   },
   {
     path: '/receipts/:id/image',
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: '/scan',
     element: <Scan />,
+  },
+  {
+    path: '/share-receipt/:id',
+    element: <ShareReceipt />,
   },
 ])
 
