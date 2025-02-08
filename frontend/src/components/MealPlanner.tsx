@@ -22,6 +22,8 @@ interface MealPlannerProps {
 
 const MealPlanner = ({ onClose }: MealPlannerProps) => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editedDescriptions, setEditedDescriptions] = useState<Record<number, string>>({});
 
   // Mock meal suggestions based on common grocery items
   const mealSuggestions: MealSuggestion[] = [
@@ -45,6 +47,27 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
     }
   ];
 
+  const handleEdit = (id: number) => {
+    setEditingId(id);
+    if (!editedDescriptions[id]) {
+      setEditedDescriptions(prev => ({
+        ...prev,
+        [id]: mealSuggestions.find(s => s.id === id)?.description || ''
+      }));
+    }
+  };
+
+  const handleSave = (id: number) => {
+    setEditingId(null);
+  };
+
+  const handleDescriptionChange = (id: number, value: string) => {
+    setEditedDescriptions(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
   // Mock recipe generation
   const generateRecipe = (suggestion: MealSuggestion) => {
     const recipes: Record<number, Recipe> = {
@@ -52,7 +75,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
         id: 1,
         name: "Mediterranean Salad",
         image: suggestion.image,
-        description: suggestion.description,
+        description: editedDescriptions[suggestion.id] || suggestion.description,
         ingredients: [
           "2 cups mixed salad greens",
           "1 cucumber, diced",
@@ -77,7 +100,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
         id: 2,
         name: "Breakfast Power Bowl",
         image: suggestion.image,
-        description: suggestion.description,
+        description: editedDescriptions[suggestion.id] || suggestion.description,
         ingredients: [
           "2 eggs",
           "1 cup cooked quinoa",
@@ -101,7 +124,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
         id: 3,
         name: "Veggie Stir Fry",
         image: suggestion.image,
-        description: suggestion.description,
+        description: editedDescriptions[suggestion.id] || suggestion.description,
         ingredients: [
           "2 cups mixed vegetables (broccoli, carrots, snap peas)",
           "2 cloves garlic, minced",
@@ -120,7 +143,10 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
       }
     };
 
-    setSelectedRecipe(recipes[suggestion.id]);
+    setSelectedRecipe({
+      ...recipes[suggestion.id],
+      description: editedDescriptions[suggestion.id] || suggestion.description
+    });
   };
 
   return (
@@ -151,8 +177,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
               {mealSuggestions.map((suggestion) => (
                 <div 
                   key={suggestion.id}
-                  className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => generateRecipe(suggestion)}
+                  className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <img 
                     src={suggestion.image} 
@@ -161,7 +186,59 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   />
                   <div className="p-4">
                     <h3 className="font-semibold text-lg mb-2">{suggestion.name}</h3>
-                    <p className="text-gray-600">{suggestion.description}</p>
+                    {editingId === suggestion.id ? (
+                      <div className="space-y-2">
+                        <div className="bg-blue-50 p-3 rounded-md">
+                          <label className="block text-sm font-medium text-blue-700 mb-1">
+                            Customize your meal description:
+                          </label>
+                          <textarea
+                            value={editedDescriptions[suggestion.id] || suggestion.description}
+                            onChange={(e) => handleDescriptionChange(suggestion.id, e.target.value)}
+                            className="w-full p-2 border rounded-md text-sm"
+                            rows={3}
+                            placeholder="Enter custom description..."
+                          />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleSave(suggestion.id)}
+                            className="px-4 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            Save Changes
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-gray-600">
+                          {editedDescriptions[suggestion.id] || suggestion.description}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <button
+                            onClick={() => handleEdit(suggestion.id)}
+                            className="px-4 py-2 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors flex items-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                            Customize Meal
+                          </button>
+                          <button
+                            onClick={() => generateRecipe(suggestion)}
+                            className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                            </svg>
+                            Generate Recipe
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
