@@ -1,5 +1,8 @@
 import { z } from 'zod'
-import { createReceiptReceiptsPostResponse } from './types'
+import {
+  createReceiptReceiptsPostResponse,
+  listReceiptsReceiptsGetResponse,
+} from './types'
 
 const BASE_URL = 'http://localhost:8000'
 
@@ -20,11 +23,25 @@ export const createNewReceipt = async (
   const data = await response.json()
 
   console.log(data)
-  // :|
-  data['timestamp'] = data['timestamp'] + 'Z'
   return createReceiptReceiptsPostResponse.parse(data)
 }
 
 export const getImageUrl = (receiptId: string): string => {
   return `${BASE_URL}/receipts/${receiptId}/image`
+}
+
+export const listReceipts = async (): Promise<
+  z.infer<typeof listReceiptsReceiptsGetResponse>
+> => {
+  const response = await fetch(BASE_URL + '/receipts')
+
+  // console.log(await response.text())
+  // console.log(await response.json())
+  const d = await response.json()
+  console.log(d)
+  // const data = await response.json()
+
+  // console.log(data)
+  return listReceiptsReceiptsGetResponse.parse(d)
+  // return d as z.infer<typeof listReceiptsReceiptsGetResponse>
 }

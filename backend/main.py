@@ -51,7 +51,7 @@ async def create_receipt(
     await store_receipt_image(key, image)
     try:
         j = get_receipt_json(get_image_location(key))
-
+        print(j)
         return insert_receipt_record(
             NewReceipt(name=name, key=key, data=j, timestamp=datetime.now())
         )
@@ -63,6 +63,7 @@ async def create_receipt(
 @app.get("/receipts")
 def list_receipts() -> list[Receipt]:
     receipts = list_receipt_records()
+    print(receipts)
     return receipts
 
 

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
 const Navigation = () => {
   return (
@@ -7,14 +7,14 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-gray-800">
-              PayPerLess
+              payperless
             </Link>
             <div className="ml-6 flex space-x-8">
               <Link
                 to="/user-home"
                 className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
               >
-                My Receipts
+                Receipts
               </Link>
               <Link
                 to="/scan"
@@ -35,7 +35,7 @@ const Navigation = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navigation; 
+export default Navigation
