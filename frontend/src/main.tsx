@@ -13,6 +13,7 @@ import SharedReceipt from './components/SharedReceipt.tsx'
 import Layout from './components/Layout.tsx'
 import SavedRecipes from './components/SavedRecipes.tsx'
 import SustainabilityLeaderboard from './components/SustainabilityLeaderboard'
+import NewRecipe from './components/NewRecipe.tsx'
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: 'saved-recipes',
         element: <SavedRecipes />,
+      },
+      {
+        path: 'new-recipe',
+        element: <NewRecipe />,
       },
       {
         path: 'sustainability',
