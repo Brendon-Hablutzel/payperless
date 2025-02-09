@@ -320,7 +320,7 @@ def chatWithReciept(reciept_json: list):
     # returns a url to chat with the reciept data
     url = "https://hackduke.streamlit.app/"
     newparams = {
-        "reclist": json.dumps(reciept_json)
+        "reclist": json.dumps(reciept_json),
         "embed": "true"
     }
     url += "?" + urllib.parse.urlencode(newparams)
