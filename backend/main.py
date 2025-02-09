@@ -48,12 +48,16 @@ app.add_middleware(
 async def create_receipt(
     name: str = Form(...), image: UploadFile = File(...)
 ) -> Receipt:
+    print("posting receipt...")
     key = uuid4().hex
 
+    print("storing image...")
     await store_receipt_image(key, image)
     try:
+        print("getting json...")
         j = get_receipt_json(get_image_location(key))
         # print(j)
+        print("inserting record...")
         return insert_receipt_record(
             NewReceipt(name=name, key=key, data=j, timestamp=datetime.now())
         )

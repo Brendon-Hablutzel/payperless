@@ -42,6 +42,7 @@ const Scan = () => {
     if (image && name) {
       try {
         setMissingName(false)
+        setIsError(false);
         setUploadingStatus('uploading')
         const res = await createNewReceipt(name, image)
         console.log('asedf')
