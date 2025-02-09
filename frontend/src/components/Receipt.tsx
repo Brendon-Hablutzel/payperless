@@ -60,9 +60,7 @@ const Receipt = () => {
             </div>
           </div>
         ) : (
-          <div className="text-red-500">
-            Error, please try again -- ensure the image is a receipt
-          </div>
+          <div className="text-red-500">Error, please try again</div>
         )}
       </div>
     </div>
