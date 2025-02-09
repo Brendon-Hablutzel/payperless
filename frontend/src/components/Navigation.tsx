@@ -22,6 +22,12 @@ const Navigation = () => {
               >
                 Scan
               </Link>
+              <Link
+                to="/saved-recipes"
+                className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
+              >
+                My Recipes
+              </Link>
             </div>
           </div>
           <div className="flex items-center">

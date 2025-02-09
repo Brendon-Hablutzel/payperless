@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Recipe {
   id: number;
@@ -21,9 +22,14 @@ interface MealPlannerProps {
 }
 
 const MealPlanner = ({ onClose }: MealPlannerProps) => {
+  const navigate = useNavigate();
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedDescriptions, setEditedDescriptions] = useState<Record<number, string>>({});
+  const [savedRecipeIds, setSavedRecipeIds] = useState<number[]>(() => {
+    const saved = localStorage.getItem('savedRecipes');
+    return saved ? JSON.parse(saved).map((r: Recipe) => r.id) : [];
+  });
 
   // Mock meal suggestions based on common grocery items
   const mealSuggestions: MealSuggestion[] = [
@@ -149,6 +155,29 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
     });
   };
 
+  const saveRecipe = (recipe: Recipe) => {
+    const savedRecipes = JSON.parse(localStorage.getItem('savedRecipes') || '[]');
+    const isAlreadySaved = savedRecipes.some((r: Recipe) => r.id === recipe.id);
+    
+    if (!isAlreadySaved) {
+      const recipeToSave = {
+        ...recipe,
+        savedAt: new Date().toISOString()
+      };
+      const newSavedRecipes = [...savedRecipes, recipeToSave];
+      localStorage.setItem('savedRecipes', JSON.stringify(newSavedRecipes));
+      setSavedRecipeIds(prev => [...prev, recipe.id]);
+      alert('Recipe saved to your collection!');
+    } else {
+      alert('This recipe is already in your collection!');
+    }
+  };
+
+  const goToSavedRecipes = () => {
+    onClose();
+    navigate('/saved-recipes');
+  };
+
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
@@ -252,7 +281,30 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   className="w-full md:w-1/3 h-64 object-cover rounded-lg"
                 />
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold mb-4">{selectedRecipe.name}</h3>
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-2xl font-bold">{selectedRecipe.name}</h3>
+                    {savedRecipeIds.includes(selectedRecipe.id) ? (
+                      <button
+                        onClick={goToSavedRecipes}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        View in My Recipes
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => saveRecipe(selectedRecipe)}
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                        Save Recipe
+                      </button>
+                    )}
+                  </div>
                   <p className="text-gray-600 mb-4">{selectedRecipe.description}</p>
                   
                   <h4 className="font-semibold text-lg mb-2">Ingredients:</h4>
@@ -270,12 +322,20 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   </ol>
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedRecipe(null)}
-                className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-              >
-                Back to Suggestions
-              </button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setSelectedRecipe(null)}
+                  className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Back to Suggestions
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           )}
         </div>
