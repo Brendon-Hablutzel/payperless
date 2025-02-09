@@ -127,7 +127,7 @@ const Receipt = () => {
               <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+                className="text-gray-500 hover:text-gray-700 transition-colors hover:cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -163,45 +163,79 @@ const Receipt = () => {
           <div className="w-full max-w-6xl mx-auto lg:flex lg:gap-8">
             {/* Receipt Details Section */}
             <div className="w-full lg:w-2/3">
-              <h2 className="text-2xl font-bold mb-4">{receipt?.data.store_name || 'Receipt Details'}</h2>
-              
+              <h2 className="text-2xl font-bold mb-4">
+                {receipt?.data.store_name || 'Receipt Details'}
+              </h2>
+
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 mb-6">
                 <button
                   onClick={handleGenerateBudgetTips}
-                  className="inline-flex items-center px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors shadow-sm"
+                  className="inline-flex items-center px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors shadow-sm hover:cursor-pointer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                    <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   Budget Tips
                 </button>
                 {/* test */}
                 <button
                   onClick={handleGenerateEcoTips}
-                  className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors shadow-sm"
+                  className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors shadow-sm hover:cursor-pointer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.382 4.317C8.056 2.242 11.356 1.5 15 1.5c1.941 0 3.384.196 4.596.598a1 1 0 01.71 1.212l-2.067 7.23a1 1 0 01-.572.642l-3.83 1.914a1 1 0 01-.892 0l-3.83-1.914a1 1 0 01-.572-.642L6.477 3.31a1 1 0 01.71-1.212C8.615 1.696 10.878 1.5 15 1.5zM15 0C11.097 0 7.557.779 3.621 3.004a2.5 2.5 0 00-1.176 3.031l2.066 7.23a2.5 2.5 0 001.429 1.607l3.83 1.914a2.5 2.5 0 002.23 0l3.83-1.914a2.5 2.5 0 001.429-1.607l2.066-7.23a2.5 2.5 0 00-1.176-3.031C16.443.779 12.903 0 9 0z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.382 4.317C8.056 2.242 11.356 1.5 15 1.5c1.941 0 3.384.196 4.596.598a1 1 0 01.71 1.212l-2.067 7.23a1 1 0 01-.572.642l-3.83 1.914a1 1 0 01-.892 0l-3.83-1.914a1 1 0 01-.572-.642L6.477 3.31a1 1 0 01.71-1.212C8.615 1.696 10.878 1.5 15 1.5zM15 0C11.097 0 7.557.779 3.621 3.004a2.5 2.5 0 00-1.176 3.031l2.066 7.23a2.5 2.5 0 001.429 1.607l3.83 1.914a2.5 2.5 0 002.23 0l3.83-1.914a2.5 2.5 0 001.429-1.607l2.066-7.23a2.5 2.5 0 00-1.176-3.031C16.443.779 12.903 0 9 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   Eco Tips
                 </button>
                 <button
                   onClick={() => setShowMealPlanner(true)}
-                  className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-sm"
+                  className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-sm hover:cursor-pointer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   Recipe Ideas
                 </button>
                 <button
                   onClick={() => navigate(`/share-receipt/${id}`)}
-                  className="inline-flex items-center px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors shadow-sm"
+                  className="inline-flex items-center px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors shadow-sm hover:cursor-pointer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                   </svg>
                   Share
