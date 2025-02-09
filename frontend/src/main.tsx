@@ -14,6 +14,8 @@ import Layout from './components/Layout.tsx'
 import SavedRecipes from './components/SavedRecipes.tsx'
 import SustainabilityLeaderboard from './components/SustainabilityLeaderboard'
 import NewRecipe from './components/NewRecipe.tsx'
+import ExploreRecipes from './components/ExploreRecipes.tsx'
+import UserProfile from './components/UserProfile.tsx'
 
 const router = createBrowserRouter([
   {
@@ -59,6 +61,14 @@ const router = createBrowserRouter([
       {
         path: 'new-recipe',
         element: <NewRecipe />,
+      },
+      {
+        path: 'explore-recipes',
+        element: <ExploreRecipes />,
+      },
+      {
+        path: 'profile/:userId',
+        element: <UserProfile />,
       },
       {
         path: 'sustainability',
