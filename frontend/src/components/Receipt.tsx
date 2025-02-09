@@ -166,7 +166,7 @@ const Receipt = () => {
             {/* Receipt Details Section */}
             <div className="w-full lg:w-2/3">
               <h2 className="text-2xl font-bold mb-4">
-                {receipt?.data.store_name || 'Receipt Details'}
+                {receipt?.name || 'Receipt Details'}
               </h2>
 
               {/* Action Buttons */}
