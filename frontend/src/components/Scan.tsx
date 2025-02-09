@@ -173,7 +173,7 @@ const Scan = () => {
         </form>
         {isError ? (
           <div className="text-red-500 text-center p-4">
-            Error uploading, please try again
+            Error uploading, please try again -- ensure the image is a receipt
           </div>
         ) : null}
       </div>
