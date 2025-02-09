@@ -45,6 +45,7 @@ const Scan = () => {
         setUploadingStatus('uploading')
         const res = await createNewReceipt(name, image)
         console.log('asedf')
+        console.log(res)
         console.log(res.data)
         expectedReceiptData.parse(res.data)
         console.log('BLAH')
