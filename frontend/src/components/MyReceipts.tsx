@@ -36,10 +36,14 @@ const MyReceipts = () => {
     ;(async () => {
       try {
         const receiptsResponse = await listReceipts()
-        const p = receiptsResponse.map((r) => ({
-          ...r,
-          data: expectedReceiptData.parse(r.data),
-        }))
+        console.log(receiptsResponse)
+        const p = receiptsResponse
+          .filter((r) => expectedReceiptData.safeParse(r.data).success)
+          .map((r) => ({
+            ...r,
+            data: expectedReceiptData.parse(r.data),
+          }))
+
         p.reverse()
         setReceipts(p)
       } catch (e) {
@@ -130,8 +134,16 @@ const MyReceipts = () => {
             <div className="flex justify-center">
               <GridLoader />
             </div>
-          )}
-        </div>
+          ))
+        ) : isError ? (
+          <div className="text-red-500">
+            Error loading receipts, please try again
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <GridLoader />
+          </div>
+        )}
       </div>
     </div>
   )
