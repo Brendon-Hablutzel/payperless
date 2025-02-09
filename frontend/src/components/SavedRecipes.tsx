@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Recipe {
   id: number;
@@ -9,6 +10,12 @@ interface Recipe {
   instructions: string[];
   savedAt: string;
   fullText?: string;
+  author?: {
+    id: number;
+    name: string;
+    ecoScore: number;
+    recipesCount: number;
+  };
 }
 
 const SavedRecipes = () => {
@@ -72,6 +79,39 @@ ${selectedRecipe.instructions.join('\n')}`;
     }
   };
 
+  const shareToExplore = (recipe: Recipe) => {
+    // Get existing community recipes
+    const communityRecipes = JSON.parse(localStorage.getItem('communityRecipes') || '[]');
+    
+    // Get user info from localStorage (in a real app, this would come from auth)
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{"id": 1, "name": "Demo User", "ecoScore": 100, "recipesCount": 1}');
+    
+    // Create the shared recipe with author info and additional fields
+    const sharedRecipe = {
+      ...recipe,
+      author: {
+        id: userInfo.id,
+        name: userInfo.name,
+        ecoScore: userInfo.ecoScore,
+        recipesCount: userInfo.recipesCount
+      },
+      likes: 0,
+      cookTime: "30 mins", // Default value
+      cuisine: "Other",
+      tags: ["Community"],
+      sharedAt: new Date().toISOString()
+    };
+    
+    // Add to community recipes
+    localStorage.setItem('communityRecipes', JSON.stringify([...communityRecipes, sharedRecipe]));
+    
+    // Update user's recipe count
+    userInfo.recipesCount += 1;
+    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    
+    alert('Recipe shared to Explore page successfully!');
+  };
+
   if (selectedRecipe) {
     const recipe = isEditing ? editedRecipe : selectedRecipe;
     if (!recipe) return null;
@@ -92,27 +132,40 @@ ${selectedRecipe.instructions.join('\n')}`;
               </svg>
               Back to Collection
             </button>
-            {!isEditing ? (
-              <button
-                onClick={startEditing}
-                className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                Edit Recipe
-              </button>
-            ) : (
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Save Changes
-              </button>
-            )}
+            <div className="flex gap-2">
+              {!isEditing ? (
+                <>
+                  <button
+                    onClick={() => shareToExplore(recipe)}
+                    className="px-4 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                    </svg>
+                    Share to Explore
+                  </button>
+                  <button
+                    onClick={startEditing}
+                    className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    Edit Recipe
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleSave}
+                  className="px-4 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  Save Changes
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -174,7 +227,18 @@ ${selectedRecipe.instructions.join('\n')}`;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">My Recipe Collection</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">My Recipe Collection</h1>
+        <Link
+          to="/new-recipe"
+          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          New Recipe
+        </Link>
+      </div>
       {savedRecipes.length === 0 ? (
         <div className="text-center py-12">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -198,16 +262,18 @@ ${selectedRecipe.instructions.join('\n')}`;
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-2">{recipe.name}</h3>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={() => setSelectedRecipe(recipe)}
-                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                  >
-                    View Recipe
-                  </button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={() => setSelectedRecipe(recipe)}
+                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      View Recipe
+                    </button>
+                  </div>
                   <button
                     onClick={() => deleteRecipe(recipe.id)}
-                    className="p-1 text-red-500 hover:text-red-600 transition-colors"
+                    className="p-1 text-red-500 hover:text-red-600 transition-colors self-end"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
