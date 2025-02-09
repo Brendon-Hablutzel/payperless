@@ -2,7 +2,7 @@ import psycopg
 from models import NewReceipt, Receipt
 import json
 
-connection_string = "dbname=payperless user=postgres password=postgres host=localhost"
+connection_string = "dbname=receiptscanner user=receiptscanner password=oijasLODIUjliusandhliuhadsi host=localhost"
 
 
 def db_connection(func):
