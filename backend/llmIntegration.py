@@ -218,10 +218,103 @@ def generate_insights(reciept_json: list):
                 ],
             }
         ],
-        model=model,
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
         temperature=0.1,
     )
     return chat_completion.choices[0].message.content
+
+
+def generate_recipies_list(reciept_json: list):
+    prompt = """
+    This is a reciept. Suggest me some dishes that I can make with these ingredients..
+
+    send the reciept data in the following format:
+    ```json
+    {
+        'recipes': [
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] },
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] },
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] }
+        ]
+    }
+    ```
+    Output only a single JSON object with the list of recipes.
+    """
+
+    all_receipts = ""
+    for i in range(len(reciept_json)):
+        all_receipts += f"\n\nReciept {i+1}:" + json.dumps(reciept_json[i])
+
+
+
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # model=model,
+    )
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt + all_receipts,
+                    }
+                ],
+            }
+        ],
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
+        temperature=0.1,
+    )
+    print(chat_completion.choices[0].message.content)
+    recepies_json = llm_resp_to_json(chat_completion.choices[0].message.content)
+    return recepies_json
+
+
+def generate_recipie_details(recepie = dict, showThinking=False):
+    """recepice = { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] }"""
+
+    prompt = f"""Can you generate a detailed recipe for {recepie["name"]} using the following ingredients: {" ".join(recepie["ingredients"])} """
+
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # model=model,
+    )
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt,
+                    }
+                ],
+            }
+        ],
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
+        temperature=0.1,
+    )
+    if showThinking:
+        output = chat_completion.choices[0].message.content
+    else:
+        output = ""
+        thinking = False
+        for line in chat_completion.choices[0].message.content.split("\n"):
+            if "<think>" == line:
+                thinking = True
+                continue
+            if "</think>" == line:
+                thinking = False
+                continue
+            if thinking:
+                continue
+            output += line + "\n" 
+    return output
+
 
 
 if __name__ == "__main__":
@@ -229,5 +322,14 @@ if __name__ == "__main__":
     test_image_path = "sa4bzhkgewj81.jpg"
     with Image.open(test_image_path) as img:
         receipt_json = process_receipt(img)
-        print(receipt_json)
-        print(generate_insights([receipt_json]))
+        # print(receipt_json)
+        # print(generate_insights([receipt_json]))
+        recepies = generate_recipies_list([receipt_json])
+        print(recepies)
+
+        
+        DishRecepie = generate_recipie_details(recepies['recipes'][0])
+
+        print(DishRecepie)
+
+
