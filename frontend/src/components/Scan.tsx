@@ -2,6 +2,20 @@ import { useState } from 'react'
 import { createNewReceipt } from '../api/fetch'
 import { useNavigate } from 'react-router-dom'
 import { GridLoader } from 'react-spinners'
+import { z } from 'zod'
+
+const expectedReceiptItem = z.object({
+  name: z.string(),
+  quantity: z.number(),
+  price: z.number(),
+})
+
+const expectedReceiptData = z.object({
+  date: z.string(),
+  total_amount: z.number(),
+  store_name: z.string(),
+  items: z.array(expectedReceiptItem),
+})
 
 const Scan = () => {
   const [name, setName] = useState('')
@@ -29,10 +43,15 @@ const Scan = () => {
       try {
         setMissingName(false)
         setUploadingStatus('uploading')
-        await createNewReceipt(name, image)
+        const res = await createNewReceipt(name, image)
+        console.log('asedf')
+        console.log(res.data)
+        expectedReceiptData.parse(res.data)
+        console.log('BLAH')
         setUploadingStatus('finished')
         setTimeout(() => navigate('/user-home'), 1000)
       } catch (error) {
+        setUploadingStatus('waiting')
         setIsError(true)
         console.error('Failed to upload receipt:', error)
       }

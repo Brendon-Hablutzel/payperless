@@ -37,10 +37,12 @@ const MyReceipts = () => {
       try {
         const receiptsResponse = await listReceipts()
         console.log(receiptsResponse)
-        const p = receiptsResponse.map((r) => ({
-          ...r,
-          data: expectedReceiptData.parse(r.data),
-        }))
+        const p = receiptsResponse
+          .filter((r) => expectedReceiptData.safeParse(r.data).success)
+          .map((r) => ({
+            ...r,
+            data: expectedReceiptData.parse(r.data),
+          }))
         p.reverse()
         setReceipts(p)
       } catch (e) {
@@ -97,7 +99,7 @@ const MyReceipts = () => {
           ))
         ) : isError ? (
           <div className="text-red-500">
-            Error loading recipes, please try again
+            Error loading receipts, please try again
           </div>
         ) : (
           <div className="flex justify-center">
