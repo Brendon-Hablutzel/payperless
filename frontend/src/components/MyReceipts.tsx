@@ -134,16 +134,8 @@ const MyReceipts = () => {
             <div className="flex justify-center">
               <GridLoader />
             </div>
-          ))
-        ) : isError ? (
-          <div className="text-red-500">
-            Error loading receipts, please try again
-          </div>
-        ) : (
-          <div className="flex justify-center">
-            <GridLoader />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
