@@ -70,7 +70,7 @@ def ocr_reciept(pil_img, model=model):
                     Output format:
                         JSON Object:
                         {
-                            "date": "DDMMYYYY",
+                            "date": "DD-MM-YYYY",
                             "total_amount": 0.0,
                             "items": [
                                 {
@@ -98,7 +98,7 @@ def ocr_reciept(pil_img, model=model):
                     Example Output: 
 
                     ```{
-                        "date": "07042017",
+                        "date": "07-04-2017",
                         "total_amount": 29.01,
                         "items": [
                             {
