@@ -16,9 +16,7 @@ export const listReceiptsReceiptsGetResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "key": zod.string(),
-  "data": zod.object({
-
-}),
+  "data": zod.any(),
   "timestamp": zod.string()
 })
 export const listReceiptsReceiptsGetResponse = zod.array(listReceiptsReceiptsGetResponseItem)
@@ -31,9 +29,7 @@ export const createReceiptReceiptsPostResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "key": zod.string(),
-  "data": zod.object({
-
-}),
+  "data": zod.any(),
   "timestamp": zod.string()
 })
 
@@ -49,9 +45,7 @@ export const getReceiptReceiptsIdGetResponse = zod.object({
   "id": zod.number(),
   "name": zod.string(),
   "key": zod.string(),
-  "data": zod.object({
-
-}),
+  "data": zod.any(),
   "timestamp": zod.string()
 })
 
