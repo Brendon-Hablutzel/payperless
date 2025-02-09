@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { listReceiptsReceiptsGetResponseItem } from '../api/types'
 import { listReceipts } from '../api/fetch'
+import { GridLoader } from 'react-spinners'
 
 const expectedReceiptItem = z.object({
   name: z.string(),
@@ -12,6 +13,7 @@ const expectedReceiptItem = z.object({
 const expectedReceiptData = z.object({
   date: z.string(),
   total_amount: z.number(),
+  store_name: z.string(),
   items: z.array(expectedReceiptItem),
 })
 
@@ -26,15 +28,22 @@ const MyReceipts = () => {
     undefined
   )
 
+  const [isError, setIsError] = useState(false)
+
   useEffect(() => {
     ;(async () => {
-      const receiptsResponse = await listReceipts()
-      console.log(receiptsResponse)
-      const p = receiptsResponse.map((r) => ({
-        ...r,
-        data: expectedReceiptData.parse(r.data),
-      }))
-      setReceipts(p)
+      try {
+        const receiptsResponse = await listReceipts()
+        console.log(receiptsResponse)
+        const p = receiptsResponse.map((r) => ({
+          ...r,
+          data: expectedReceiptData.parse(r.data),
+        }))
+        setReceipts(p)
+      } catch (e) {
+        setIsError(true)
+        console.error(e)
+      }
     })()
   }, [])
 
@@ -48,7 +57,9 @@ const MyReceipts = () => {
               className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-semibold">{receipt.name}</h2>
+                <h2 className="text-lg font-semibold">
+                  {receipt.name} - {receipt.data.store_name}
+                </h2>
                 <div className="flex items-center gap-4">
                   <span className="text-green-600 font-medium">
                     ${receipt.data.total_amount.toFixed(2)}
@@ -72,8 +83,14 @@ const MyReceipts = () => {
               </div>
             </div>
           ))
+        ) : isError ? (
+          <div className="text-red-500">
+            Error loading recipes, please try again
+          </div>
         ) : (
-          <div>loading</div>
+          <div className="flex justify-center">
+            <GridLoader />
+          </div>
         )}
       </div>
     </div>

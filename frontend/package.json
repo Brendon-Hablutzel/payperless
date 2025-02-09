@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "prod": "vite --port 9384 --host",
-    "build": "tsc -b && vite build",
+    "dev": "VITE_API_URL=http://localhost:8000 vite",
+    "prod": "VITE_API_URL=https://payperlessbackend.dingus.griffinht.com vite --port 9384 --host",
+    "build": "VITE_API_URL=https://payperlessbackend.dingus.griffinht.com tsc -b && vite build",
     "preview": "vite preview",
     "check": "npx prettier . --check",
     "format": "npx prettier . --write",
