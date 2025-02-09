@@ -187,7 +187,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
           <div className="text-red-500 mb-4">{error}</div>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors hover:cursor-pointer"
           >
             Close
           </button>
@@ -209,7 +209,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
             <h2 className="text-2xl font-bold text-gray-900">Recipe Ideas</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-500 hover:text-gray-700 transition-colors hover:cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -268,7 +268,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                       <div className="flex justify-end">
                         <button
                           onClick={() => generateRecipe(suggestion)}
-                          className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm"
+                          className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm hover:cursor-pointer"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -306,7 +306,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                     {savedRecipeIds.includes(selectedRecipe.id) ? (
                       <button
                         onClick={goToSavedRecipes}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm hover:cursor-pointer"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +321,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                     ) : (
                       <button
                         onClick={() => saveRecipe(selectedRecipe)}
-                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1 shadow-sm"
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1 shadow-sm hover:cursor-pointer"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -368,13 +368,13 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedRecipe(null)}
-                  className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                  className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors hover:cursor-pointer"
                 >
                   Back to Suggestions
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-sm"
+                  className="flex-1 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-sm hover:cursor-pointer"
                 >
                   Done
                 </button>
