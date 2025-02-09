@@ -204,7 +204,8 @@ def process_receipt(pil_img):
             with open(f"llm_responses/receipt_{image_hash}.json", "w+") as f:
                 json.dump(final_json, f)
             break
-        except:
+        except Exception as e:
+            print(e)
             print("Error: Retrying")
             continue
 
