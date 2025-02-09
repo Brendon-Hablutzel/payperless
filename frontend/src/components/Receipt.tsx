@@ -292,18 +292,10 @@ const Receipt = () => {
               </div>
 
               <div className="flex flex-col items-end space-y-2">
-                <div className="flex justify-between w-48">
-                  <span className="text-gray-600">Subtotal:</span>
-                  <span>${receipt?.data.total_amount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between w-48">
-                  <span className="text-gray-600">Tax:</span>
-                  <span>${receipt?.data.tax.toFixed(2)}</span>
-                </div>
                 {receipt?.data.tip > 0 && (
                   <div className="flex justify-between w-48">
                     <span className="text-gray-600">Tip:</span>
-                    <span>${receipt?.data.tip.toFixed(2)}</span>
+                    <span>${receipt?.data.total_amount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between w-48 font-bold pt-2 border-t border-gray-200">
