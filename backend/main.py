@@ -1,7 +1,7 @@
 from models import NewReceipt, Receipt
 from fastapi import FastAPI, Form, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from db import (
     create_receipt_table,
     list_receipt_records,
@@ -18,6 +18,8 @@ from uuid import uuid4
 from datetime import datetime
 from dotenv import load_dotenv
 from receipt_processing import get_receipt_json
+from llmIntegration import generate_recipies_list, generate_recipie_details
+from shutterstocksearch import searchShutterstock
 
 
 @asynccontextmanager
@@ -91,3 +93,32 @@ def sustainability_insights() -> str:
     receipts = list_receipt_records()
     insights = ""
     return insights
+
+
+@app.get("/recipes/suggestions")
+def get_recipe_suggestions() -> JSONResponse:
+    receipts = list_receipt_records()
+    receipt_data = [r.data for r in receipts]
+    recipes = generate_recipies_list(receipt_data)
+    return JSONResponse(content=recipes)
+
+
+@app.get("/recipes/{recipe_name}/details")
+def get_recipe_details(recipe_name: str, ingredients: str, description: str | None = None) -> JSONResponse:
+    ingredients_list = ingredients.split(',')
+    recipe = {
+        "name": recipe_name, 
+        "ingredients": ingredients_list,
+        "description": description
+    }
+    details = generate_recipie_details(recipe)
+    return JSONResponse(content={"details": details})
+
+
+@app.get("/images/search/{query}")
+def search_images(query: str) -> JSONResponse:
+    try:
+        image_urls = searchShutterstock(query)
+        return JSONResponse(content={"images": image_urls})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)

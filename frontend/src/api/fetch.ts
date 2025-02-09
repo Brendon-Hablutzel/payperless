@@ -50,3 +50,60 @@ export const getReceipt = async (
 
   return getReceiptReceiptsIdGetResponse.parse(d)
 }
+
+export interface Recipe {
+  id: number;
+  name: string;
+  ingredients: string[];
+  image: string;
+  description: string;
+  instructions?: string[];
+}
+
+export interface RecipeSuggestions {
+  recipes: Recipe[];
+}
+
+export interface RecipeDetails {
+  details: string;
+}
+
+export const getRecipeSuggestions = async (): Promise<RecipeSuggestions> => {
+  const response = await fetch(`${BASE_URL}/recipes/suggestions`);
+  const data = await response.json();
+  return data;
+};
+
+export interface RecipeInput {
+  name: string;
+  ingredients: string[];
+  description?: string;
+}
+
+export const getRecipeDetails = async (recipe: RecipeInput): Promise<RecipeDetails> => {
+  const params = new URLSearchParams({
+    ingredients: recipe.ingredients.join(',')
+  });
+  if (recipe.description) {
+    params.append('description', recipe.description);
+  }
+  
+  const response = await fetch(
+    `${BASE_URL}/recipes/${encodeURIComponent(recipe.name)}/details?${params.toString()}`
+  );
+  const data = await response.json();
+  return data;
+};
+
+export interface ImageSearchResponse {
+  images: string[];
+}
+
+export const searchImages = async (query: string): Promise<ImageSearchResponse> => {
+  const response = await fetch(`${BASE_URL}/images/search/${encodeURIComponent(query)}`);
+  const data = await response.json();
+  if (response.ok) {
+    return data;
+  }
+  throw new Error(data.error || 'Failed to search images');
+};

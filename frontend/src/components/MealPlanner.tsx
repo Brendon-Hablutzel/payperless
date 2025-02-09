@@ -1,13 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getRecipeSuggestions, getRecipeDetails, Recipe, searchImages } from '../api/fetch';
 
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
+interface MealPlannerProps {
+  onClose: () => void;
 }
 
 interface MealSuggestion {
@@ -15,43 +11,81 @@ interface MealSuggestion {
   name: string;
   image: string;
   description: string;
+  ingredients: string[];
 }
 
-interface MealPlannerProps {
-  onClose: () => void;
+interface RecipeInput {
+  name: string;
+  ingredients: string[];
+  description?: string;
 }
 
 const MealPlanner = ({ onClose }: MealPlannerProps) => {
   const navigate = useNavigate();
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [recipeDetails, setRecipeDetails] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedDescriptions, setEditedDescriptions] = useState<Record<number, string>>({});
   const [savedRecipeIds, setSavedRecipeIds] = useState<number[]>(() => {
     const saved = localStorage.getItem('savedRecipes');
     return saved ? JSON.parse(saved).map((r: Recipe) => r.id) : [];
   });
+  const [mealSuggestions, setMealSuggestions] = useState<MealSuggestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock meal suggestions based on common grocery items
-  const mealSuggestions: MealSuggestion[] = [
-    {
-      id: 1,
-      name: "Mediterranean Salad",
-      image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300",
-      description: "Fresh salad with vegetables, olives, and feta cheese"
-    },
-    {
-      id: 2,
-      name: "Breakfast Power Bowl",
-      image: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=300",
-      description: "Nutritious bowl with eggs, vegetables, and whole grains"
-    },
-    {
-      id: 3,
-      name: "Veggie Stir Fry",
-      image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=300",
-      description: "Quick and healthy vegetable stir fry"
-    }
-  ];
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      try {
+        setLoading(true);
+        const data = await getRecipeSuggestions();
+        
+        // Create suggestions without images first
+        const suggestions = data.recipes.map((recipe, index) => ({
+          id: index + 1,
+          name: recipe.name,
+          image: '', // Will be populated later
+          description: `Recipe using: ${recipe.ingredients.join(', ')}`,
+          ingredients: recipe.ingredients
+        }));
+        
+        setMealSuggestions(suggestions);
+
+        // Fetch images for each recipe
+        for (const suggestion of suggestions) {
+          try {
+            const imageData = await searchImages(suggestion.name);
+            if (imageData.images && imageData.images.length > 0) {
+              setMealSuggestions(prev => 
+                prev.map(s => 
+                  s.id === suggestion.id 
+                    ? { ...s, image: imageData.images[0] }
+                    : s
+                )
+              );
+            }
+          } catch (err) {
+            console.error(`Failed to fetch image for ${suggestion.name}:`, err);
+            // Fallback to Unsplash if Shutterstock fails
+            setMealSuggestions(prev => 
+              prev.map(s => 
+                s.id === suggestion.id 
+                  ? { ...s, image: `https://source.unsplash.com/featured/?${encodeURIComponent(s.name)}` }
+                  : s
+              )
+            );
+          }
+        }
+      } catch (err) {
+        setError('Failed to load recipe suggestions');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, []);
 
   const handleEdit = (id: number) => {
     setEditingId(id);
@@ -74,85 +108,29 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
     }));
   };
 
-  // Mock recipe generation
-  const generateRecipe = (suggestion: MealSuggestion) => {
-    const recipes: Record<number, Recipe> = {
-      1: {
-        id: 1,
-        name: "Mediterranean Salad",
+  const generateRecipe = async (suggestion: MealSuggestion) => {
+    try {
+      setLoading(true);
+      const recipeInput: RecipeInput = {
+        name: suggestion.name,
+        ingredients: suggestion.ingredients,
+        description: editedDescriptions[suggestion.id]
+      };
+      const details = await getRecipeDetails(recipeInput);
+      
+      setSelectedRecipe({
+        ...recipeInput,
         image: suggestion.image,
-        description: editedDescriptions[suggestion.id] || suggestion.description,
-        ingredients: [
-          "2 cups mixed salad greens",
-          "1 cucumber, diced",
-          "1 cup cherry tomatoes, halved",
-          "1/2 red onion, thinly sliced",
-          "1/2 cup Kalamata olives",
-          "1/2 cup crumbled feta cheese",
-          "2 tablespoons olive oil",
-          "1 tablespoon balsamic vinegar",
-          "Salt and pepper to taste"
-        ],
-        instructions: [
-          "Wash and prepare all vegetables",
-          "In a large bowl, combine salad greens, cucumber, tomatoes, and red onion",
-          "Add olives and feta cheese",
-          "Drizzle with olive oil and balsamic vinegar",
-          "Season with salt and pepper",
-          "Toss gently and serve immediately"
-        ]
-      },
-      2: {
-        id: 2,
-        name: "Breakfast Power Bowl",
-        image: suggestion.image,
-        description: editedDescriptions[suggestion.id] || suggestion.description,
-        ingredients: [
-          "2 eggs",
-          "1 cup cooked quinoa",
-          "1 cup baby spinach",
-          "1 avocado, sliced",
-          "Cherry tomatoes",
-          "Salt and pepper to taste",
-          "Hot sauce (optional)"
-        ],
-        instructions: [
-          "Cook quinoa according to package instructions",
-          "Poach or fry eggs to your liking",
-          "In a bowl, arrange quinoa as the base",
-          "Add spinach and sliced avocado",
-          "Top with eggs and cherry tomatoes",
-          "Season with salt and pepper",
-          "Add hot sauce if desired"
-        ]
-      },
-      3: {
-        id: 3,
-        name: "Veggie Stir Fry",
-        image: suggestion.image,
-        description: editedDescriptions[suggestion.id] || suggestion.description,
-        ingredients: [
-          "2 cups mixed vegetables (broccoli, carrots, snap peas)",
-          "2 cloves garlic, minced",
-          "1 tablespoon ginger, minced",
-          "2 tablespoons soy sauce",
-          "1 tablespoon sesame oil",
-          "Cooked rice for serving"
-        ],
-        instructions: [
-          "Heat sesame oil in a large wok or skillet",
-          "Add minced garlic and ginger, sauté until fragrant",
-          "Add vegetables and stir-fry until crisp-tender",
-          "Add soy sauce and toss to combine",
-          "Serve hot over rice"
-        ]
-      }
-    };
-
-    setSelectedRecipe({
-      ...recipes[suggestion.id],
-      description: editedDescriptions[suggestion.id] || suggestion.description
-    });
+        id: suggestion.id,
+        description: suggestion.name,
+        instructions: details.details.split('\n').filter(line => line.trim() !== '')
+      });
+    } catch (err) {
+      setError('Failed to generate recipe details');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const saveRecipe = (recipe: Recipe) => {
@@ -177,6 +155,35 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
     onClose();
     navigate('/saved-recipes');
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center p-4 z-50">
+        <div className="bg-white/90 backdrop-blur-lg rounded-xl shadow-xl p-6">
+          <div className="flex items-center space-x-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+            <p>Loading recipes...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center p-4 z-50">
+        <div className="bg-white/90 backdrop-blur-lg rounded-xl shadow-xl p-6">
+          <div className="text-red-500 mb-4">{error}</div>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -216,14 +223,14 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                     <div className="space-y-3">
                       <div className="bg-blue-50/50 backdrop-blur-sm rounded-lg p-3 border border-blue-100">
                         <label className="block text-sm font-medium text-blue-700 mb-1">
-                          Customize description:
+                          Customize recipe prompt:
                         </label>
                         <textarea
                           value={editedDescriptions[suggestion.id] || suggestion.description}
                           onChange={(e) => handleDescriptionChange(suggestion.id, e.target.value)}
                           className="w-full p-2 border rounded-md text-sm bg-white/90"
                           rows={3}
-                          placeholder="Enter custom description..."
+                          placeholder="Enter custom instructions for recipe generation..."
                         />
                       </div>
                       <div className="flex justify-end">
@@ -275,7 +282,6 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                       </button>
                     )}
                   </div>
-                  <p className="text-gray-600 mb-4">{selectedRecipe.description}</p>
                   
                   <div className="bg-blue-50/50 backdrop-blur-sm rounded-lg p-4 border border-blue-100 mb-4">
                     <h4 className="font-semibold text-lg mb-2 text-blue-900">Ingredients:</h4>
@@ -289,7 +295,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   <div className="bg-green-50/50 backdrop-blur-sm rounded-lg p-4 border border-green-100">
                     <h4 className="font-semibold text-lg mb-2 text-green-900">Instructions:</h4>
                     <ol className="list-decimal list-inside space-y-2">
-                      {selectedRecipe.instructions.map((instruction, index) => (
+                      {selectedRecipe.instructions?.map((instruction, index) => (
                         <li key={index} className="text-gray-700">{instruction}</li>
                       ))}
                     </ol>
