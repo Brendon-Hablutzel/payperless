@@ -321,7 +321,7 @@ def chatWithReciept(reciept_json: list):
     url = "https://hackduke.streamlit.app/"
     newparams = {
         "reclist": json.dumps(reciept_json),
-        "embed": "true"
+        "embed": "true" # doesnt work lmfao
     }
     url += "?" + urllib.parse.urlencode(newparams)
     return url

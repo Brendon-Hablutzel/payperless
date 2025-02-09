@@ -101,6 +101,8 @@ const Receipt = () => {
     setShowEcoTips(true)
   }
 
+  const chatUrl = receipt ? `https://hackduke.streamlit.app/?reclist=${encodeURIComponent(JSON.stringify([receipt.data]))}&embed=true` : '';
+
   const Modal = ({
     show,
     onClose,
@@ -328,6 +330,20 @@ const Receipt = () => {
           <div className="text-red-500">Error, please try again</div>
         )}
       </div>
+
+      {/* Chat Section */}
+      {receipt && !isError && imgExists && (
+        <div className="mt-8 w-full max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Chat with your Receipt</h2>
+          <div className="w-full h-[600px] rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+            <iframe
+              src={chatUrl}
+              className="w-full h-full"
+              title="Receipt Chat"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Budget Tips Modal */}
       <Modal
