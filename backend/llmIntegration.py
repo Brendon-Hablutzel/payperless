@@ -14,6 +14,7 @@ from PIL import Image
 
 load_dotenv()
 import hashlib
+import urllib
 
 model = "llama-3.2-90b-vision-preview"
 
@@ -315,6 +316,15 @@ def generate_recipie_details(recepie = dict, showThinking=False):
             output += line + "\n" 
     return output
 
+def chatWithReciept(reciept_json: list):
+    # returns a url to chat with the reciept data
+    url = "https://hackduke.streamlit.app/"
+    newparams = {
+        "reclist": json.dumps(reciept_json)
+    }
+    url += "?" + urllib.parse.urlencode(newparams)
+    return url
+
 
 
 if __name__ == "__main__":
@@ -322,6 +332,8 @@ if __name__ == "__main__":
     test_image_path = "sa4bzhkgewj81.jpg"
     with Image.open(test_image_path) as img:
         receipt_json = process_receipt(img)
+        print(chatWithReciept([receipt_json]))
+        exit()
         # print(receipt_json)
         # print(generate_insights([receipt_json]))
         recepies = generate_recipies_list([receipt_json])
