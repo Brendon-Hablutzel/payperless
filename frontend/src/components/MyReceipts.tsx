@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { listReceiptsReceiptsGetResponseItem } from '../api/types'
 import { listReceipts } from '../api/fetch'
 import { GridLoader } from 'react-spinners'
+import linkSvg from '../../public/outgoing-link.svg'
+import { Link } from 'react-router-dom'
 
 const expectedReceiptItem = z.object({
   name: z.string(),
@@ -39,6 +41,7 @@ const MyReceipts = () => {
           ...r,
           data: expectedReceiptData.parse(r.data),
         }))
+        p.reverse()
         setReceipts(p)
       } catch (e) {
         setIsError(true)
@@ -57,9 +60,18 @@ const MyReceipts = () => {
               className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-semibold">
-                  {receipt.name} - {receipt.data.store_name}
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-semibold">
+                    {receipt.name} - {receipt.data.store_name}
+                  </h2>
+                  <Link
+                    to={`/receipts/${receipt.id}`}
+                    target="_blank"
+                    className="hover:cursor-pointer"
+                  >
+                    <img src={linkSvg} className="h-[1.125rem]" />
+                  </Link>
+                </div>
                 <div className="flex items-center gap-4">
                   <span className="text-green-600 font-medium">
                     ${receipt.data.total_amount.toFixed(2)}

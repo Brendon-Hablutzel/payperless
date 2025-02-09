@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import {
   createReceiptReceiptsPostResponse,
+  getReceiptReceiptsIdGetResponse,
   listReceiptsReceiptsGetResponse,
 } from './types'
 
@@ -17,7 +18,6 @@ export const createNewReceipt = async (
   const response = await fetch(BASE_URL + '/receipts', {
     method: 'POST',
     body: formData,
-    // TODO: content type?
   })
 
   const data = await response.json()
@@ -35,13 +35,18 @@ export const listReceipts = async (): Promise<
 > => {
   const response = await fetch(BASE_URL + '/receipts')
 
-  // console.log(await response.text())
-  // console.log(await response.json())
   const d = await response.json()
   console.log(d)
-  // const data = await response.json()
 
-  // console.log(data)
   return listReceiptsReceiptsGetResponse.parse(d)
-  // return d as z.infer<typeof listReceiptsReceiptsGetResponse>
+}
+
+export const getReceipt = async (
+  id: string
+): Promise<z.infer<typeof getReceiptReceiptsIdGetResponse>> => {
+  const response = await fetch(BASE_URL + '/receipts/' + id)
+
+  const d = await response.json()
+
+  return getReceiptReceiptsIdGetResponse.parse(d)
 }

@@ -13,6 +13,7 @@ import SharedReceipt from './components/SharedReceipt.tsx'
 import Layout from './components/Layout.tsx'
 import SavedRecipes from './components/SavedRecipes.tsx'
 import SustainabilityLeaderboard from './components/SustainabilityLeaderboard'
+import Receipt from './components/Receipt.tsx'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: 'user-home',
         element: <MyReceipts />,
+      },
+      {
+        path: 'receipts/:id',
+        element: <Receipt />,
       },
       {
         path: 'receipts/:id/image',
