@@ -13,58 +13,9 @@ from io import BytesIO
 from PIL import Image
 
 load_dotenv()
-# from google.genai.model import ChatModel
-# from google.genai.session import Session
-
-# from google import genai
-# from google.genai import types
 import hashlib
 
 model = "llama-3.2-90b-vision-preview"
-
-# image = PIL.Image.open('60c4199364474569561cba359d486e6c69ae8cba.jpeg')
-
-
-# response = client.models.generate_content(
-#     model="gemini-2.0-flash",
-#     contents=["What is this image?", image])
-
-# print(response.text)
-
-# exit()
-# Initialize the session with your API key
-# session = Session(api_key="YOUR_API_KEY")
-
-# # Load the Gemini 2.0 Flash model
-# model = ChatModel.from_pretrained("models/gemini-2.0-flash", session=session)
-
-# # Function to get a response from the model
-# def get_response(prompt):
-#     response = model.chat(prompt)
-#     return response.responses[0].text
-
-# # Main loop for the chatbot
-# if __name__ == "__main__":
-#     print("Welcome to the Gemini 2.0 Flash Chatbot!")
-#     while True:
-#         user_input = input("You: ")
-#         if user_input.lower() in ["exit", "quit"]:
-#             print("Goodbye!")
-#             break
-#         bot_response = get_response(user_input)
-#         print(f"Bot: {bot_response}")
-
-
-# Path to your image
-
-# Getting the base64 string
-# base64_image = encode_image(image_path)
-
-
-# Function to encode the image
-# def encode_image(image_path):
-#     with open(image_path, "rb") as image_file:
-#         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
 def encode_image(pil_img, format="JPEG"):
@@ -75,46 +26,11 @@ def encode_image(pil_img, format="JPEG"):
     return encoded
 
 
-# def encode_image_name(image_path, format="JPEG"):
-#     # """
-#     # Wrapper function that accepts an image path,
-#     # opens the image using PIL, and returns the base64-encoded string.
-
-#     # Parameters:
-#     #     image_path (str): The file path to the image.
-#     #     format (str): The format to use when saving (default is 'JPEG').
-
-#     # Returns:
-#     #     str: The base64-encoded string of the image.
-#     # """
-#     with Image.open(image_path) as img:
-#         return encode_pil_image(img, format=format)
-
-
 def ocr_reciept(pil_img, model=model):
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY"),
-        # model=model,
     )
     base64_image = encode_image(pil_img)
-    # ocr_completion = client.ocr.completions.create(
-    #     images=[{
-    #     "image": {
-    #         "base64": base64_image
-    #     }
-    #     }],
-    #     model=model
-    # )
-
-    # Output the following information.
-    # - Date: DDMMYYYY Format
-    # - Total Amount
-    # - Items: List in format {Item Name, Quantity, Price} for each item
-    # - Taxes
-    # - Store Name
-    # - Address
-    # - Phone Number
-    # - Store Type (Grocery, Restaurant, etc.)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -198,85 +114,11 @@ def ocr_reciept(pil_img, model=model):
         model=model,
         temperature=0.1,
     )
-    # print(chat_completion.choices[0].message.content)
     return chat_completion.choices[0].message.content
-
-
-def ocr_receipt_gemini(pil_img, model="gemini-2.0-flash"):
-    apikey = os.environ.get("GEMINI_API_KEY")
-    client = genai.Client(api_key=apikey)
-    prompt = """
-    Read the attached image and return the information in JSON format.
-    Return only a single JSON object.
-    If you can't find the information, return an empty object or leave fields empty.
-    Do not add any additional text to the output.
-    Only print JSON. Do not include any extra receipt details.
-
-    Example:
-
-    Output format:
-    {
-        "date": "DDMMYYYY",
-        "total_amount": 0.0,
-        "items": [
-            {
-                "name": "Item Name",
-                "quantity": 0,
-                "price": 0.0,
-                "category": "Item Category",
-                "sub_category": "Item Sub Category",
-                "is_heathly": true,
-                "is_organic": true,
-                "is_local": true,
-                "is_sustainable": true
-            }
-        ],
-        "tax": 0.0,
-        "tip": 0.0,
-        "store_name": "Store Name",
-        "address": "Address",
-        "phone_number": "Phone Number",
-        "store_type": "Store Type"
-    }
-
-    Example Output:
-    ```json
-    {
-        "date": "07042017",
-        "total_amount": 29.01,
-        "items": [
-            {
-                "name": "Unknown Item",
-                "quantity": 1,
-                "price": 25.23
-            }
-        ],
-        "tax": 3.78,
-        "store_name": "Main Street Restaurant",
-        "address": "6332 Business Drive Suite 528 Palo Alto California 94301",
-        "phone_number": "575-1628095",
-        "store_type": "Restaurant"
-    }```
-    """
-
-    # Call Gemini using the multimodal generate_content endpoint.
-    # Pass the text prompt as the first item and the PIL image as the second.
-    response = client.models.generate_content(
-        model=model,
-        contents=[prompt, pil_img],
-        # temperature=0.1
-    )
-    print(response.text)
-    return response.text
 
 
 def llm_resp_to_json(llm_resp):
     json_output = ""
-
-    # jsonRegex = r"(```)?(json)?\n?(.*?)\n?(```)?"
-    # match = re.search(jsonRegex, llm_resp, re.DOTALL)
-    # if match:
-    #     json_output = match.group(1)
 
     curly_brace_count = 0
     output_json = ""
@@ -293,25 +135,6 @@ def llm_resp_to_json(llm_resp):
 
     output_json = json.loads(json_output)
     return output_json
-
-
-# chat_completion = client.chat.completions.create(
-#     messages=[
-#         {
-#             "role": "user",
-#             "content": [
-#                 {"type": "text", "text": "What's in this image?"},
-#                 {
-#                     "type": "image_url",
-#                     "image_url": {
-#                         "url": f"data:image/jpeg;base64,{base64_image}",
-#                     },
-#                 },
-#             ],
-#         }
-#     ],
-#     model=model,
-# )
 
 
 def calculate_sha256(pil_img, format="PNG"):
@@ -337,10 +160,8 @@ def calculate_sha256(pil_img, format="PNG"):
     return sha256_hash
 
 
-def process_receipt(pil_img):
+def process_receipt(pil_img, num_retries=3):
     image_hash = calculate_sha256(pil_img)
-    # if exist llm_responses/receipt_{image_hash}.json return that
-    # create_dir =
     if not os.path.exists("llm_responses"):
         os.mkdir("llm_responses")
     if not os.path.exists("llm_responses/texts"):
@@ -351,7 +172,7 @@ def process_receipt(pil_img):
             return json.load(f)
 
     final_json = {}
-    for i in range(1):
+    for i in range(num_retries):
         try:
             llm_resp = ocr_reciept(pil_img)
             # print(llm_resp)
@@ -365,19 +186,22 @@ def process_receipt(pil_img):
             print("Error: Retrying")
             continue
 
-    # if final_json == {}:
-    #     raise Exception("Error: Could not process receipt")
-    #     return None
     return final_json
-    # return llm_resp_to_json()
 
 
-def generate_insights(reciept_json):
+def generate_insights(reciept_json: list):
     prompt = """
     Generate insights from reciept data. Tell me what you can infer from this reciept.
     Patterns you observe, any interesting insights, etc.
     Good Choices, Bad Choices, etc.
     """
+
+    all_receipts = ""
+    for i in range(len(reciept_json)):
+        all_receipts += f"\n\nReciept {i+1}:" + json.dumps(reciept_json[i])
+
+
+
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY"),
         # model=model,
@@ -389,33 +213,123 @@ def generate_insights(reciept_json):
                 "content": [
                     {
                         "type": "text",
-                        "text": prompt + json.dumps(reciept_json),
+                        "text": prompt + all_receipts,
                     }
                 ],
             }
         ],
-        model=model,
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
         temperature=0.1,
     )
     return chat_completion.choices[0].message.content
 
 
-# print(chat_completion.choices[0].message.content)
+def generate_recipies_list(reciept_json: list):
+    prompt = """
+    This is a reciept. Suggest me some dishes that I can make with these ingredients..
+
+    send the reciept data in the following format:
+    ```json
+    {
+        'recipes': [
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] },
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] },
+            { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] }
+        ]
+    }
+    ```
+    Output only a single JSON object with the list of recipes.
+    """
+
+    all_receipts = ""
+    for i in range(len(reciept_json)):
+        all_receipts += f"\n\nReciept {i+1}:" + json.dumps(reciept_json[i])
+
+
+
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # model=model,
+    )
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt + all_receipts,
+                    }
+                ],
+            }
+        ],
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
+        temperature=0.1,
+    )
+    print(chat_completion.choices[0].message.content)
+    recepies_json = llm_resp_to_json(chat_completion.choices[0].message.content)
+    return recepies_json
+
+
+def generate_recipie_details(recepie = dict, showThinking=False):
+    """recepice = { name: "Recipe Name", ingredients: ["Ingredient 1", "Ingredient 2", "Ingredient 3"] }"""
+
+    prompt = f"""Can you generate a detailed recipe for {recepie["name"]} using the following ingredients: {" ".join(recepie["ingredients"])} """
+
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        # model=model,
+    )
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt,
+                    }
+                ],
+            }
+        ],
+        # model=model,
+        model="deepseek-r1-distill-llama-70b",
+        temperature=0.1,
+    )
+    if showThinking:
+        output = chat_completion.choices[0].message.content
+    else:
+        output = ""
+        thinking = False
+        for line in chat_completion.choices[0].message.content.split("\n"):
+            if "<think>" == line:
+                thinking = True
+                continue
+            if "</think>" == line:
+                thinking = False
+                continue
+            if thinking:
+                continue
+            output += line + "\n" 
+    return output
+
+
+
 if __name__ == "__main__":
     test_image_path = "60c4199364474569561cba359d486e6c69ae8cba.jpeg"
     test_image_path = "sa4bzhkgewj81.jpg"
-    # print()
-    # pprint.pprint(llm_resp_to_json(ocr_reciept()))
     with Image.open(test_image_path) as img:
-        # calculate Image Hash
-        # image_hash = hash(img.tobytes())
-
-        # pprint.pprint(ocr_receipt(img))
         receipt_json = process_receipt(img)
-        # pprint.pprint(receipt_json)
-        print(generate_insights(receipt_json))
-        # pprint.pprint(process_receipt(img))
-        # with open(f"llm_responses/receipt_{image_hash}.json", "w+") as f:
-        #     json.dump(receipt_json, f)
+        # print(receipt_json)
+        # print(generate_insights([receipt_json]))
+        recepies = generate_recipies_list([receipt_json])
+        print(recepies)
 
-    # pprint.pprint(process_receipt())
+        
+        DishRecepie = generate_recipie_details(recepies['recipes'][0])
+
+        print(DishRecepie)
+
+
