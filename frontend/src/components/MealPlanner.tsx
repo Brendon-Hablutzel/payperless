@@ -180,20 +180,18 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      className="fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center p-4 z-50"
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
+        if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/90 backdrop-blur-lg rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Meal Suggestions</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Recipe Ideas</h2>
             <button 
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -206,7 +204,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
               {mealSuggestions.map((suggestion) => (
                 <div 
                   key={suggestion.id}
-                  className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                  className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all"
                 >
                   <img 
                     src={suggestion.image} 
@@ -216,22 +214,22 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   <div className="p-4">
                     <h3 className="font-semibold text-lg mb-2">{suggestion.name}</h3>
                     <div className="space-y-3">
-                      <div className="bg-blue-50 rounded-md p-3">
+                      <div className="bg-blue-50/50 backdrop-blur-sm rounded-lg p-3 border border-blue-100">
                         <label className="block text-sm font-medium text-blue-700 mb-1">
                           Customize description:
                         </label>
                         <textarea
                           value={editedDescriptions[suggestion.id] || suggestion.description}
                           onChange={(e) => handleDescriptionChange(suggestion.id, e.target.value)}
-                          className="w-full p-2 border rounded-md text-sm bg-white"
+                          className="w-full p-2 border rounded-md text-sm bg-white/90"
                           rows={3}
                           placeholder="Enter custom description..."
                         />
                       </div>
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end">
                         <button
                           onClick={() => generateRecipe(suggestion)}
-                          className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
+                          className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
@@ -250,15 +248,15 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                 <img 
                   src={selectedRecipe.image} 
                   alt={selectedRecipe.name}
-                  className="w-full md:w-1/3 h-64 object-cover rounded-lg"
+                  className="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md"
                 />
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-2xl font-bold">{selectedRecipe.name}</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">{selectedRecipe.name}</h3>
                     {savedRecipeIds.includes(selectedRecipe.id) ? (
                       <button
                         onClick={goToSavedRecipes}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center gap-1 shadow-sm"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
@@ -268,7 +266,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                     ) : (
                       <button
                         onClick={() => saveRecipe(selectedRecipe)}
-                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1"
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center gap-1 shadow-sm"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
@@ -279,19 +277,23 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                   </div>
                   <p className="text-gray-600 mb-4">{selectedRecipe.description}</p>
                   
-                  <h4 className="font-semibold text-lg mb-2">Ingredients:</h4>
-                  <ul className="list-disc list-inside mb-4">
-                    {selectedRecipe.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">{ingredient}</li>
-                    ))}
-                  </ul>
+                  <div className="bg-blue-50/50 backdrop-blur-sm rounded-lg p-4 border border-blue-100 mb-4">
+                    <h4 className="font-semibold text-lg mb-2 text-blue-900">Ingredients:</h4>
+                    <ul className="list-disc list-inside space-y-1">
+                      {selectedRecipe.ingredients.map((ingredient, index) => (
+                        <li key={index} className="text-gray-700">{ingredient}</li>
+                      ))}
+                    </ul>
+                  </div>
 
-                  <h4 className="font-semibold text-lg mb-2">Instructions:</h4>
-                  <ol className="list-decimal list-inside">
-                    {selectedRecipe.instructions.map((instruction, index) => (
-                      <li key={index} className="text-gray-700 mb-2">{instruction}</li>
-                    ))}
-                  </ol>
+                  <div className="bg-green-50/50 backdrop-blur-sm rounded-lg p-4 border border-green-100">
+                    <h4 className="font-semibold text-lg mb-2 text-green-900">Instructions:</h4>
+                    <ol className="list-decimal list-inside space-y-2">
+                      {selectedRecipe.instructions.map((instruction, index) => (
+                        <li key={index} className="text-gray-700">{instruction}</li>
+                      ))}
+                    </ol>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -303,7 +305,7 @@ const MealPlanner = ({ onClose }: MealPlannerProps) => {
                 </button>
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                  className="flex-1 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors shadow-sm"
                 >
                   Done
                 </button>
