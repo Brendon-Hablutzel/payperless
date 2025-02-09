@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   BarChart,
   Bar,
@@ -7,7 +7,27 @@ import {
   Tooltip,
   ResponsiveContainer,
   LabelList,
+  LineChart,
+  Line,
+  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from 'recharts'
+
+// Add custom hook for window width
+const useWindowWidth = () => {
+  const [width, setWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return width
+}
 
 const receipts = [
   {
@@ -103,185 +123,268 @@ const receipts = [
   },
   {
     receipt_id: '20200717',
-    store: 'ALDI, Leipzig/Lausen',
+    store: 'REWE Center, Leipzig',
     date: '2020-07-17',
     items: [
       {
         item_id: 'tzatziki',
-        name: 'Tzatziki Sauce',
-        price: 1.15,
+        name: 'Premium Tzatziki',
+        price: 2.15,
         category: 'Prepared Foods',
       },
       {
         item_id: 'yogurt',
-        name: 'Mild Greek-Style Yogurt',
-        price: 0.82,
+        name: 'Bio Greek Yogurt',
+        price: 1.82,
         category: 'Dairy',
       },
       {
         item_id: 'hummus',
-        name: 'Hummus',
-        price: 0.96,
+        name: 'Fresh Hummus',
+        price: 2.96,
         category: 'Prepared Foods',
       },
       {
         item_id: 'guacamole',
-        name: 'Fresh Guacamole',
-        price: 1.54,
+        name: 'Organic Guacamole',
+        price: 3.54,
         category: 'Prepared Foods',
       },
       {
         item_id: 'eggs',
-        name: '6 Organic Eggs',
-        price: 2.12,
+        name: 'Free-range Eggs',
+        price: 3.12,
         category: 'Dairy',
       },
       {
         item_id: 'kiwi',
-        name: 'Gold Kiwi (4 pieces)',
+        name: 'Gold Kiwi',
         price: 2.12,
-        category: 'Fruits & Vegetables',
-      },
-      {
-        item_id: 'meatballs',
-        name: 'Mini Meatballs (Quality Selection)',
-        price: 2.12,
-        category: 'Prepared Foods',
-      },
-      {
-        item_id: 'agave_syrup',
-        name: 'Agave Syrup (Organic)',
-        price: 2.51,
-        category: 'Pantry Staples',
-      },
-      {
-        item_id: 'golden_sun_snack',
-        name: 'Golden Sun Snack',
-        price: 1.63,
-        category: 'Snacks',
-      },
-      {
-        item_id: 'fish_specialties',
-        name: 'Fish Specialties',
-        price: 2.51,
-        category: 'Prepared Foods',
-      },
-      {
-        item_id: 'cranberries',
-        name: 'Cranberries (Dried)',
-        price: 1.93,
         category: 'Fruits & Vegetables',
       },
     ],
   },
   {
     receipt_id: '20200725',
-    store: 'ALDI, Leipzig/Lausen',
+    store: 'Lidl, Leipzig Zentrum',
     date: '2020-07-25',
     items: [
       {
         item_id: 'mushrooms',
-        name: 'Brown Mushrooms',
-        price: 0.73,
+        name: 'Organic Mushrooms',
+        price: 1.73,
         category: 'Fruits & Vegetables',
       },
       {
-        item_id: 'tzatziki',
-        name: 'Tzatziki Sauce',
-        price: 1.15,
-        category: 'Prepared Foods',
+        item_id: 'bread',
+        name: 'Sourdough Bread',
+        price: 2.15,
+        category: 'Breads & Baked Goods',
       },
       {
-        item_id: 'yogurt',
-        name: 'Greek-Style Yogurt',
-        price: 0.93,
+        item_id: 'cheese',
+        name: 'Aged Gouda',
+        price: 3.93,
         category: 'Dairy',
       },
       {
-        item_id: 'potato_salad',
-        name: 'Spreewald Potato Salad',
-        price: 1.93,
-        category: 'Prepared Foods',
+        item_id: 'wine',
+        name: 'Red Wine',
+        price: 4.93,
+        category: 'Beverages',
       },
       {
-        item_id: 'olives',
-        name: 'Olive Variations',
-        price: 1.54,
-        category: 'Prepared Foods',
-      },
-      {
-        item_id: 'bell_peppers',
-        name: 'Bell Peppers',
-        price: 1.21,
-        category: 'Fruits & Vegetables',
-      },
-      {
-        item_id: 'flatbread',
-        name: 'Flatbread',
-        price: 0.82,
-        category: 'Breads & Baked Goods',
+        item_id: 'chocolate',
+        name: 'Dark Chocolate',
+        price: 2.54,
+        category: 'Snacks',
       },
     ],
   },
   {
     receipt_id: '20200926',
-    store: 'ALDI, Leipzig/Lausen',
+    store: 'Edeka, Leipzig Hauptbahnhof',
     date: '2020-09-26',
     items: [
       {
-        item_id: 'yogurt',
-        name: 'Mild Greek-Style Yogurt',
-        price: 0.82,
-        category: 'Dairy',
-      },
-      {
-        item_id: 'tzatziki',
-        name: 'Tzatziki Sauce',
-        price: 1.15,
+        item_id: 'sushi',
+        name: 'Fresh Sushi Box',
+        price: 7.82,
         category: 'Prepared Foods',
       },
       {
-        item_id: 'meatballs',
-        name: 'Mini Meatballs (Quality Selection)',
-        price: 2.22,
-        category: 'Prepared Foods',
+        item_id: 'salmon',
+        name: 'Smoked Salmon',
+        price: 5.15,
+        category: 'Seafood',
       },
       {
-        item_id: 'potato_bread',
-        name: 'Pumpkin Seed Potato Bread',
-        price: 1.44,
-        category: 'Breads & Baked Goods',
-      },
-      {
-        item_id: 'soft_cheese',
-        name: 'Creamy Soft Cheese',
-        price: 0.96,
-        category: 'Dairy',
-      },
-      {
-        item_id: 'cucumber',
-        name: 'Salad Cucumbers',
-        price: 0.57,
+        item_id: 'avocados',
+        name: 'Ripe Avocados',
+        price: 3.22,
         category: 'Fruits & Vegetables',
       },
       {
-        item_id: 'swiss_cheese',
-        name: 'Swiss Cheese Specialty',
-        price: 2.7,
-        category: 'Dairy',
+        item_id: 'quinoa',
+        name: 'Organic Quinoa',
+        price: 4.44,
+        category: 'Pantry Staples',
       },
       {
-        item_id: 'bell_peppers',
-        name: 'Bell Peppers',
-        price: 1.54,
-        category: 'Fruits & Vegetables',
+        item_id: 'kombucha',
+        name: 'Craft Kombucha',
+        price: 3.96,
+        category: 'Beverages',
       },
     ],
   },
+  {
+    receipt_id: '20201015',
+    store: 'Bio Company, Leipzig',
+    date: '2020-10-15',
+    items: [
+      {
+        item_id: 'tofu',
+        name: 'Organic Tofu',
+        price: 2.99,
+        category: 'Protein',
+      },
+      {
+        item_id: 'tempeh',
+        name: 'Fresh Tempeh',
+        price: 3.49,
+        category: 'Protein',
+      },
+      {
+        item_id: 'coconut_milk',
+        name: 'Organic Coconut Milk',
+        price: 2.99,
+        category: 'Pantry Staples',
+      },
+      {
+        item_id: 'chia_seeds',
+        name: 'Organic Chia Seeds',
+        price: 4.99,
+        category: 'Pantry Staples',
+      },
+      {
+        item_id: 'almond_butter',
+        name: 'Raw Almond Butter',
+        price: 6.99,
+        category: 'Pantry Staples',
+      },
+    ],
+  },
+  {
+    receipt_id: '20201103',
+    store: 'Kaufland, Leipzig Paunsdorf',
+    date: '2020-11-03',
+    items: [
+      {
+        item_id: 'paper_towels',
+        name: 'Recycled Paper Towels',
+        price: 3.99,
+        category: 'Household Items',
+      },
+      {
+        item_id: 'laundry_detergent',
+        name: 'Eco Laundry Detergent',
+        price: 7.99,
+        category: 'Household Items',
+      },
+      {
+        item_id: 'dish_soap',
+        name: 'Natural Dish Soap',
+        price: 2.99,
+        category: 'Household Items',
+      },
+      {
+        item_id: 'sponges',
+        name: 'Compostable Sponges',
+        price: 3.49,
+        category: 'Household Items',
+      },
+    ],
+  },
+  {
+    receipt_id: '20201122',
+    store: 'Konsum, Leipzig Südvorstadt',
+    date: '2020-11-22',
+    items: [
+      {
+        item_id: 'coffee_beans',
+        name: 'Fair Trade Coffee Beans',
+        price: 8.99,
+        category: 'Beverages',
+      },
+      {
+        item_id: 'local_honey',
+        name: 'Local Honey',
+        price: 6.49,
+        category: 'Pantry Staples',
+      },
+      {
+        item_id: 'granola',
+        name: 'Artisanal Granola',
+        price: 4.99,
+        category: 'Breakfast',
+      },
+      {
+        item_id: 'oat_milk',
+        name: 'Barista Oat Milk',
+        price: 2.99,
+        category: 'Dairy Alternatives',
+      },
+    ],
+  },
+  {
+    receipt_id: '20201205',
+    store: 'Denns Bio, Leipzig',
+    date: '2020-12-05',
+    items: [
+      {
+        item_id: 'spirulina',
+        name: 'Organic Spirulina Powder',
+        price: 12.99,
+        category: 'Supplements',
+      },
+      {
+        item_id: 'coconut_water',
+        name: 'Raw Coconut Water',
+        price: 3.99,
+        category: 'Beverages',
+      },
+      {
+        item_id: 'protein_powder',
+        name: 'Plant Protein Blend',
+        price: 24.99,
+        category: 'Supplements',
+      },
+      {
+        item_id: 'kombucha_kit',
+        name: 'Kombucha Brewing Kit',
+        price: 19.99,
+        category: 'Specialty Items',
+      },
+    ],
+  }
+]
+
+const COLORS = [
+  '#0088FE',
+  '#00C49F',
+  '#FFBB28',
+  '#FF8042',
+  '#8884D8',
+  '#82CA9D',
+  '#FFC658',
+  '#FF6B6B',
 ]
 
 const Dashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const windowWidth = useWindowWidth()
+  const showLabels = windowWidth >= 768 // Only show labels on tablets and larger screens
 
   // Calculate total spending by category
   const categoryTotals = receipts.reduce(
@@ -317,6 +420,30 @@ const Dashboard = () => {
     total: Number(total.toFixed(2)),
   }))
 
+  // New calculations for spending trends
+  const dailyTotals = receipts.map((receipt) => {
+    const total = receipt.items.reduce((sum, item) => sum + item.price, 0)
+    return {
+      date: receipt.date,
+      total: Number(total.toFixed(2)),
+    }
+  })
+
+  // New calculations for store spending totals
+  const storeSpending = receipts.reduce((acc, receipt) => {
+    const storeTotal = receipt.items.reduce((sum, item) => sum + item.price, 0)
+    acc[receipt.store] = (acc[receipt.store] || 0) + storeTotal
+    return acc
+  }, {} as Record<string, number>)
+
+  // Convert to array and sort by total spent
+  const storeData = Object.entries(storeSpending)
+    .map(([store, total]) => ({
+      store,
+      total: Number(total.toFixed(2)),
+    }))
+    .sort((a, b) => b.total - a.total)
+
   const handleBarClick = (data: any) => {
     if (!selectedCategory) {
       setSelectedCategory(data.name)
@@ -324,48 +451,122 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-5 bg-white">
-      <div className="flex items-center mb-6 bg-white">
-        <h1 className="text-2xl font-bold">
-          {selectedCategory
-            ? `${selectedCategory} Breakdown`
-            : 'Spending by Category'}
-        </h1>
-        {selectedCategory && (
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className="ml-4 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 hover:cursor-pointer"
-          >
-            Back to Categories
-          </button>
-        )}
-      </div>
-      <div className="w-full h-[400px] bg-white">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ bottom: 35 }}>
-            <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
-            <YAxis
-              label={{
-                value: 'Total Spent (€)',
-                angle: -90,
-                position: 'insideLeft',
-              }}
-            />
-            <Tooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
-            <Bar
-              dataKey="total"
-              fill="#8884d8"
-              onClick={handleBarClick}
-              cursor={!selectedCategory ? 'pointer' : 'default'}
+    <div className="p-5 space-y-8 bg-white">
+      {/* Category Spending Chart */}
+      <div className="bg-white rounded-lg shadow-sm border p-5">
+        <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold">
+            {selectedCategory
+              ? `${selectedCategory} Breakdown`
+              : 'Spending by Category'}
+          </h1>
+          {selectedCategory && (
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="ml-4 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 hover:cursor-pointer"
             >
-              <LabelList
-                dataKey="total"
-                position="top"
-                formatter={(value: number) => `€${value.toFixed(2)}`}
+              Back to Categories
+            </button>
+          )}
+        </div>
+        <div className="w-full h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ bottom: 35, top: 50, left: 25 }}>
+              <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
+              <YAxis
+                label={{
+                  value: 'Total Spent (€)',
+                  angle: -90,
+                  position: 'insideLeft',
+                }}
               />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+              <Tooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
+              <Bar
+                dataKey="total"
+                fill="#8884d8"
+                onClick={handleBarClick}
+                cursor={!selectedCategory ? 'pointer' : 'default'}
+              >
+                {showLabels && (
+                  <LabelList
+                    dataKey="total"
+                    position="top"
+                    formatter={(value: number) => `€${value.toFixed(2)}`}
+                  />
+                )}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Spending Trends Chart */}
+      <div className="bg-white rounded-lg shadow-sm border p-5">
+        <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold">Spending Trends Over Time</h1>
+        </div>
+        <div className="w-full h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={dailyTotals}
+              margin={{ top: 20, right: 30, left: 20, bottom: 35 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="date"
+                angle={-45}
+                textAnchor="end"
+                height={100}
+              />
+              <YAxis
+                label={{
+                  value: 'Total Spent (€)',
+                  angle: -90,
+                  position: 'insideLeft',
+                }}
+              />
+              <Tooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke="#8884d8"
+                strokeWidth={2}
+                dot={{ fill: '#8884d8' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Store Spending Chart */}
+      <div className="bg-white rounded-lg shadow-sm border p-5">
+        <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold">Top Stores by Spending</h1>
+        </div>
+        <div className="w-full h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={storeData} margin={{ bottom: 35, left: 25 }}>
+              <XAxis dataKey="store" angle={-45} textAnchor="end" height={100} />
+              <YAxis
+                label={{
+                  value: 'Total Spent (€)',
+                  angle: -90,
+                  position: 'insideLeft',
+                }}
+              />
+              <Tooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
+              <Bar dataKey="total" fill="#8884d8">
+                {showLabels && (
+                  <LabelList
+                    dataKey="total"
+                    position="top"
+                    formatter={(value: number) => `€${value.toFixed(2)}`}
+                  />
+                )}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   )
