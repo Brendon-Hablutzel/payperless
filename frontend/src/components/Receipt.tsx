@@ -163,6 +163,7 @@ const Receipt = () => {
                   </svg>
                   Budget Tips
                 </button>
+                {/* test */}
                 <button
                   onClick={handleGenerateEcoTips}
                   className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors shadow-sm"
